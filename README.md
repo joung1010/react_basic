@@ -44,3 +44,51 @@ root.render(
 여기에 우리의 `<App/>` 이라는 component 를 연결시켜주는 것이다.  
 그러면 React 가 내부적으로 `App` component로 들어가서 return 되는 `jsx`믄법을 확인한 다음에 어떤 태그를 만들어야 되는지 확인한 후  
 브라우저에서 제공하는 `createElement`라는 동적으로 `DOM`요소를 생성하는 API를 사용해서 만들어야할 태그를 순서대로 생성해준다.  
+  
+  
+## component 수정시 발생하는 오류 대처  
+```
+Compiled with problems:X
+
+ERROR
+
+[eslint] Failed to load config "react-app" to extend from.
+Referenced from:
+```  
+발생원인은 create react-app 과 yarn 이 서로 충돌하기 떄문이다.  
+따라서 `eslint`에 관련된 설정을 수동으로 설정해 줘야된다.  
+1.해당 명령어를 추가해준다.
+```
+yarn add -D eslint-config-react-app
+```  
+2. 만약 설정후에도 해당 에러가 발생한다면  
+```
+Compiled with problems:X
+
+ERROR
+
+[eslint] Plugin "react" was conflicted between "package.json » eslint-config-react-app » C:\react_new\basic\.yarn\__virtual__\eslint-config-react-app-virtual-917c289b5c\0\cache\eslint
+-config-react-app-npm-7.0.1-78bab43841-a67e082180.zip\node_modules\eslint-config-react-app\base.js" and "BaseConfig » C:\react_new\basic\.yarn\__virtual__\eslint-config-react-app-virtual-ed176a7a96\0\cache\eslint
+-config-react-app-npm-7.0.1-78bab43841-a67e082180.zip\node_modules\eslint-config-react-app\base.js".
+```  
+  
+3. 제일 상위에다가 `.yarnrc.yml` 파일을 만든후  
+```
+packageExtensions:
+  react-scripts@*:
+    peerDependencies:
+      eslint-config-react-app: "*"
+```  
+해당설정을 추가해준다.  
+```
+packageExtensions:
+  react-scripts@*: <- 기본적으로 모든 react scripts를 사용하고 있는데
+  peerDependencies를 eslint 만큼은 우리가 설치한 것을 수동적으로 사용해줘~
+```  
+  
+4. 만약 그후에도 오류가 난다면  
+```
+yarn cache clean
+yarn install
+```  
+캐시를 삭제한후 `yarn install`로 다시 프로젝트를 세팅한 후 `yarn start`를 시작해본다.
