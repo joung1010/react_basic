@@ -91,4 +91,69 @@ packageExtensions:
 yarn cache clean
 yarn install
 ```  
-캐시를 삭제한후 `yarn install`로 다시 프로젝트를 세팅한 후 `yarn start`를 시작해본다.
+캐시를 삭제한후 `yarn install`로 다시 프로젝트를 세팅한 후 `yarn start`를 시작해본다.  
+  
+## JSX(JavaScript XML)  
+  
+먼저 component를 만들려면 함수 형태와 클래스 형태로 만들 수 있다.  
+이때 함수로 생성시 함수 이름은 무조건 대문자로 시작해야 된다. 반환 값으로는 `JSX` 문법을 이용해서 UI 를 표기해야되는지 return 해 줘야 된다.  
+  
+JSX(JavaScript XML)은 `HTML` 유사하고 또 HTML 처럼 사용할 수 있다 이때 3가지 유의사항이 있다.  
+
+1. JSX 를 return 할때는 반드시 하나의 태그만 return 해야된다.
+   1. 이때 다수의 태그를 반환하고 싶다면 부모 태그로 한번더 감싸줘야 된다.
+   2. 만약 이때 어떤 CSS 때문에 부모 태그로 감싸는 것이 아니라면 `<> </>` 빈 태그로 묶어서 반환해도 된다.
+   3. React 내부적으로는 `<Fragment></Fragment>` 태그를 이용한다.  
+```
+        <Fragment>
+            <h1>Hello</h1>
+            <h2>Heelo</h2>
+        </Fragment>
+```
+```
+        <>
+            <h1>Hello</h1>
+            <h2>Heelo</h2>
+        </>
+```
+2. HTML 에서는 class 를 사용하지만 `JSX`는 `className`을 이용해야 된다.
+   1. 이게 가능한 이유는 `App.js`파일에서 `import './App.css';`를 import 하기 때문이다.
+```
+import logo from './logo.svg';
+import './App.css';
+
+function App() {
+    return (
+        <>
+            <h1 className='orange'>Hello</h1>
+            <h2>Heelo</h2>
+        </>
+    );
+}
+```  
+
+3. 이렇게 JSX 는 `HTML` 처럼 작성할 수 있지만 작성하는 공간이 js 파일이기때문에 JavaScript 역시 작성할 수 있다. 이때 JavaSCript 코드는 `{}`안에 작성한다.
+   1. 이때 함수 안의 변수에 접근할때 `{}` 사용하지 않으면 문자로 인식해서 name 이 그대로 화면에 보여진다. `{}` 사용하면 변수에 접근에 `mason`값이 보여진다.
+   2. 즉 JavaScript 코드를 작성할때는 `{}`를 이용해서 묶어 줘야 한다.
+   3. 이미지 태그의 `width={{width:'200px',height:'200px'}}` 이것 역시 width 에 `JavaScript` 객체형태로 값을 전달 하기때문에 이역시 JavaScript 문법을 사용하므로 `{}`를 2번 사용하는 것이다.
+
+```
+function App() {
+    const name = 'mason';
+    return (
+        <>
+            <h1 className='orange'>Hello</h1>
+            <h2>Heelo</h2>
+            <p>name</p>
+            <p>{name}</p>
+            <ul>
+                <li>우유</li>
+                <li>딸기</li>
+                <li>바나나</li>
+            </ul>
+            <img
+                style={{width:'200px',height:'200px'}}
+                src="https://plus.unsplash.com/premium_photo-1671117132503-25b2baff4ffd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" alt="pink"/>
+        </>
+    );
+```  
