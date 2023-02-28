@@ -156,4 +156,38 @@ function App() {
                 src="https://plus.unsplash.com/premium_photo-1671117132503-25b2baff4ffd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80" alt="pink"/>
         </>
     );
+```    
+  
+4. 추가적으로 `JSX` 문법을 사용할때 문자열과 JavaScript 변수를 같이 사용하고 싶을때는 어떻게 할까 바로 string template를 사용하면 된다.
+```
+function App() {
+    const name = 'mason';
+    return (
+        <>
+            <h1 className='orange'>{`Hello ${name}`}</h1>
+        </>
+    );
+}
 ```  
+  
+5. `JSX` 에서 사용하는 반복분
+   1. 먼저 JavaScript 문법을 사용하기때문에 `{}`를 사용
+   2. map 함수를 이용해서 새로운 배열로 return 해주는데 그때 JSX 문법의 tag를 return
+   3. 이때 값에 접근할때도 `{}`를 통해서 접근해야된다. 안그러면 문자로 인식한다.
+```
+function App() {
+    const name = 'mason';
+    const list  = ['유유','딸기','바나나']
+    return (
+        <>
+            <ul>
+                {
+                    list.map(item => (
+                        <li>${item}</li>
+                    ))
+                }
+            </ul>
+        </>
+    );
+}
+```
