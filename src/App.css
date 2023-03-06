@@ -1,3 +1,19 @@
 .orange {
   color: orange;
 }
+
+.profile {
+  width: 300px;
+  text-align: center;
+  padding: 1rem;
+  border-radius: 20px;
+  background-color: #ebebeb;
+   box-shadow: 11px 17px 11px -5px rgba(0,0,0,0.75);
+  -webkit-box-shadow: 11px 17px 11px -5px rgba(0,0,0,0.75);
+  -moz-box-shadow: 11px 17px 11px -5px rgba(0,0,0,0.75);
+}
+.photo {
+  width: 200px;
+  height: 200px;
+  border-radius: 100%;
+}
