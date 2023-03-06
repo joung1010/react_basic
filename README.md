@@ -193,3 +193,43 @@ function App() {
 ```
   
 [HTML을 JSX 변환해주는 사이트](https://transform.tools/html-to-jsx)
+  
+## Component
+![img](./public/memo/1.component.png)  
+
+React 에서 Component를 만들때 그냥 `.js` 보다는 `.jsx`확장자를 사용하면 순수 JavaScript 파일과 React Component 를 좀더 명확하게 구분할 수 있다.  
+만약 `TypeScript`로 개발할때면 확장자를 `.ts`로 TypeScript를 이용해서 React Component를 만든다면 `.tsx`를 사용하면 된다.  
+  
+또한 우리가 만든 App 에서 Component를 만들어 나간다면 보통 `src` 디렉토리 안에 `components`디렉토리를 만들고 그안에 만들어 주면 구분하기 편한다.  
+![img](./public/memo/2.component.png)  
+  
+React Component를 만들때 함수의 이름은 대문자로 시작해야 되고  
+함수를 만든후에 항상 React 에서 사용할 수 있도록 `export`를 해줘야 한다.
+
+```
+function Profile() {
+    return <h1>Profile</h1>;
+}
+
+export default Profile;
+
+```
+  
+만약 위처럼 사용하면 함수의 이름을 바꾸게 될때마다 `export`부분도 같이 변경해 줘야만 한다.  
+```
+function Profile1() {
+    return <h1>Profile</h1>;
+}
+
+export default Profile1;
+
+```
+  
+그래서 함수 앞에 바로 `export`를 붙여주면 좀더 편하게 사용할 수 있다.  
+  
+```
+export default function Profile() {
+    return <h1>Profile</h1>;
+}
+```  
+  

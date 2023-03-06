@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 
-function App() {
+function AppJSX() {
     const name = 'mason';
     const list  = ['유유','딸기','바나나']
     return (
@@ -24,4 +24,4 @@ function App() {
     );
 }
 
-export default App;
+export default AppJSX;
