@@ -13,8 +13,20 @@
   -webkit-box-shadow: 11px 17px 11px -5px rgba(0,0,0,0.75);
   -moz-box-shadow: 11px 17px 11px -5px rgba(0,0,0,0.75);
 }
+.profile__image {
+  position: relative;
+}
 .photo {
   width: 200px;
   height: 200px;
   border-radius: 100%;
+}
+.new {
+  background-color: mediumturquoise;
+  width: 3rem;
+  height: 1.5rem;
+  border-radius: 5px;
+  font-weight: bold;
+  position: absolute;
+  right: 2.3rem;
 }
