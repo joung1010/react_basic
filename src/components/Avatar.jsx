@@ -1,10 +1,13 @@
 import React from "react";
 
-export default function Avatar({image,classNm}) {
+export default function Avatar({image, isNew}) {
     return (
-        <img
-            className={classNm}
-            src={image}
-            alt="avator"/>
+        <div className='avatar'>
+            <img
+                className='photo'
+                src={image}
+                alt="avator"/>
+            {isNew && <span className='new__clone'>New</span>}
+        </div>
     );
 }
