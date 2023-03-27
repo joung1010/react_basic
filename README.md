@@ -233,3 +233,38 @@ export default function Profile() {
 }
 ```  
   
+## Event 처리하기
+React 에서 Event 처리는 HTML 에서 작성했을때와 같이 `onClick` 속성에 값을 전달하면 된다.  
+```
+            <button onClick={(event) => {
+                console.log(event);
+                alert('버튼 클릭!');
+            }}>
+            버튼
+            </button>
+```  
+  
+  
+우리가 순수 JS 에서는 querySelector를 이용해서 요소를 가지고와서 거기에 Event를 등록을 했는데  
+React 에서는 Tag 에 `onClick`이라는 속성을 이용해서 해당 값에 우리가 처리할 함수를 전달해 주면 된다.  
+`React 는 브라우저에서 발생하는 Event를 React 에서 처리할 수 있는 Event 형태로 한단계 감싸서 객체로 만들어서  
+Event Listener에 전달한다.`  
+
+![img](./public/memo/reactEvent.png)  
+우리가 순수 JS로 처리하는 Event와 동일한 데이터가 들어있는 것을 확인할 수 있다.  
+따라서 `Event`를 등록할 때는 이런식으로 요소에다가 `onClick, onChange, onSubmit..`과 같이 등록하면 된다.  
+  
+또는 별도로 함수를 정의해서 전달할 수 있다.
+```
+   const handleClick = (event) => {
+                console.log(event);
+                alert('버튼 클릭!');
+            };
+               <button onClick={handleClick}>
+            버튼
+            </button>            
+```  
+단, 이때 주의할 점은 `event`처리 속성에 함수의 참조값을 전달해야한다.  
+만약 `<button onClick={handleClick()}>` 이런식으로 전달하게되면 `handleClick`클릭을 실행하고 난후 반환된 값을 `onClick` 속성에 할당하게 된다.  
+우리는 우리가 전달한 함수가 실행된 값을 할당하고 싶은 것이 아니라 `onClick`이 되었을때 우리의 함수를 연결 하고 싶은 것이다.  
+즉, 함수를 연결하고 싶을때는 함수의 이름인 `참조값`을 전달해야 되고 함수를 호출해서는 안된다.
