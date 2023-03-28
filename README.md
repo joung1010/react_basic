@@ -268,3 +268,69 @@ Event Listener에 전달한다.`
 만약 `<button onClick={handleClick()}>` 이런식으로 전달하게되면 `handleClick`클릭을 실행하고 난후 반환된 값을 `onClick` 속성에 할당하게 된다.  
 우리는 우리가 전달한 함수가 실행된 값을 할당하고 싶은 것이 아니라 `onClick`이 되었을때 우리의 함수를 연결 하고 싶은 것이다.  
 즉, 함수를 연결하고 싶을때는 함수의 이름인 `참조값`을 전달해야 되고 함수를 호출해서는 안된다.
+
+## 내부 상태 관리 State
+![img](./public/memo/1.state.png) 
+해당 화면에서 숫자를 증가 시킬려면 어떻게 해야 될까  
+```
+import React from "react";
+
+export default function Counter() {
+    let num = 0;
+    return (
+        <div className='counter'>
+            <span className='number'>{num}</span>
+            <button className='button' onClick={() => {num++}}>Add +</button>
+        </div>
+    );
+}
+```
+  
+이런식으로 `component`에 변경할 수 있는 변수를 선언하고  
+click 할때 그 값을 변수를 1씩 증가시키면 되지않을까??  
+결론적으로 말하면 클릭한다고해서 화면의 숫자 0의 값은 변경되지 않는다.  
+왜 값이 증가하지 않는 것일까???  
+일단 `console.log 로` 변수 `num`을 출럭해 보면
+![img](./public/memo/2.state.png)  
+값이 정상적으로 증가하지만 우리의 UI는 업데이트가 되지 않고 있다.  
+
+React 에서는 이처럼 UI와 밀접한 관계가 있는 데이터를 `state`라는 곳에 보관한다.  
+그래서 아무리 local 변수를 만들어서 보여준다고 해서, 또한 그 로컬 변수가 아무리 변경이 된다고 해서 `React`자체적으로는 그 값이 변경 되었는지 알 수 없다.  
+  
+따라서 `React` 라이브러리 에게 해당 값이 변경되었는지 알려줄려면  
+즉, 값이 변경하면 UI가 변경되게 하고 싶다면 `useState()`를 사용해야 된다.  
+이때 인자로 초기값을 전달해주면 된다.  
+
+useState() : Returns a stateful value, and a function to update it.  
+변경이 가능한 값과, 그 값을 변경할 수 있는 함수를 return 해준다.
+  
+```
+const [number, setNumber] = useState(0);
+```  
+  
+```
+import React, {useState} from "react";
+
+export default function Counter() {
+    const [count, setCount] = useState(0);
+
+    return (
+        <div className='counter'>
+            <span className='number'>{count}</span>
+            <button className='button' onClick={() => {
+
+                setCount(count+1);}}>Add +</button>
+        </div>
+    );
+}
+```
+  
+`React`에서 제공하는 `setCount`를 이용해서 state 값을 변경하면 `React`가 자동적으로 함수 `Counter`를 다시 호출해준다.  
+다시 호출된 `Counter` 함수를 통해 반환된 JSX에는 현재 counter 값을 보여주기 때문에 UI가 업데이트 된다.  
+  
+따라서 전달받은 props이 변경되거나 내부 state 상태가 변경된다면(setCount를 이용)   
+내부 상태가 변경되고 이 내부 상태가 변경이될때마다 `React`는 변경이된 `component` 함수 전체를 다시 호출한다.  
+이때 가상 DOM 요소인 Virtual DOM를 사용해서 이전 DOM 요소와 현재 DOM 요소를 비교해서  
+실제 변경된 여기서는 `span`태그만 update 해준다.  
+여기서 함수가 계속 다시 호출이 되는데 `count` 값이 0 으로 초기화 되지 않는 이유는  
+`useState`라는 React 훅은 해당 `component` 내에서 아무리 다시 호출이 되어도 값을 기억하고 있기 때문에 아무리 다시 호출이 되어도 증가된 count 값을 기억할 수 있다.

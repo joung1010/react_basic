@@ -43,3 +43,36 @@
   text-transform: uppercase;
   font-weight: bold;
 }
+.container {
+  display: flex;
+  justify-content: center;
+}
+.counter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px rgb(215,127,12) solid;
+  border-radius: 1rem;
+  width: 14rem;
+  height: 12rem;
+  margin: 2rem;
+  padding: 1rem;
+}
+.counter:hover {
+  background-color: lightyellow;
+}
+.number {
+  font-size: 5rem;
+}
+.button {
+  font-size: 2rem;
+  background: rgb(215,233,47);
+  background: linear-gradient(59deg, rgba(215,233,47,1) 33%, rgba(191,188,72,1) 71%);
+  box-shadow: 10px 10px 5px -5px rgba(0,0,0,0.71);
+  -webkit-box-shadow: 10px 10px 5px -5px rgba(0,0,0,0.71);
+  -moz-box-shadow: 10px 10px 5px -5px rgba(0,0,0,0.71);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  cursor: pointer;
+}
