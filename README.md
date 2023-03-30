@@ -334,3 +334,83 @@ export default function Counter() {
 실제 변경된 여기서는 `span`태그만 update 해준다.  
 여기서 함수가 계속 다시 호출이 되는데 `count` 값이 0 으로 초기화 되지 않는 이유는  
 `useState`라는 React 훅은 해당 `component` 내에서 아무리 다시 호출이 되어도 값을 기억하고 있기 때문에 아무리 다시 호출이 되어도 증가된 count 값을 기억할 수 있다.
+  
+## useState 유의할점!!
+
+```
+import React, {useState} from "react";
+
+export default function Counter() {
+    const [count, setCount] = useState(0);
+
+    return (
+        <div className='counter'>
+            <span className='number'>{count}</span>
+            <button className='button' onClick={() => {
+                setCount(count+1);
+                setCount(count+1);
+                setCount(count+1);
+                setCount(count+1);
+                }
+              }
+            >
+                Add +
+                </button>
+        </div>
+    );
+}
+```  
+만약 `setCount`함수를 한번에 여러번 호출하면 어떻게될까??  
+결과가 총 5가 증가해서 count 값이 5가 화면에 보이게 될까??  
+![img](./public/memo/3.state.png)  
+결과는 `1`이 보여지게 된다.  
+왜 이렇게 되는 것일까???  
+이것은 JavaScript 클로저와 밀접하게 관계가 있다.  
+`onClick`이 되었을때 전달 되는 콜백함수는
+![img](./public/memo/4.state.png)  
+전달되는 시점에 내부에서 사용하는 `count`변수의 값을 기억해둔다.  
+즉, `count = 0`이라는 값을 기억하고 현재 실행환경 정보를(lexical environment) `callback`함수에 전달한다.  
+따라서 `setCount(count + 1);`를 다섯번 호출해도 결과적으로 그 실행환경에서의 count 변수 값은 0 이기때문에 최종적으로 `setCount`의 값이 1로 설정된다.
+  
+만약 우리가 원하는 결과 `5`를 출력하고 싶다면  
+![img](./public/memo/5.state.png)  
+`useState`의 인자로 바로 초기값을 전달할 수도 있지만 `callback`함수를 전달할 수 있다.  
+이 `callback`함수는 이전 state 값을 인자로 전달해주면 그 상태값을 가지고 새로운 상태값을 반환하는 형태의 함수를 전달할 수 있다.
+![img](./public/memo/6.state.png)  
+  
+```
+export default function Counter() {
+    const [count, setCount] = useState(0);
+
+    return (
+        <div className='counter'>
+            <span className='number'>{count}</span>
+            <button className='button'
+                    onClick={() => {
+                        setCount((pre) => pre + 1);
+                        setCount((pre) => pre + 1);
+                        setCount((pre) => pre + 1);
+                        setCount((pre) => pre + 1);
+                        setCount((pre) => pre + 1);
+                    }}
+            >
+                Add +
+            </button>
+        </div>
+    );
+}
+```
+즉 위의 코드 처럼 콜백함수 형태로 전달하면 우리가 예상했던 결과값인 `5`가 화면에 나오는 것을 확인할 수 있다.  
+좀더 추가적인 설명을 하자면 위의 `onClick`에 `callback`함수를 전달할때 실행환경 정보를 같이 전달하는데  
+이번에 같은 경우 내부 `callback`함수에서 참조하는 값이 없다.  
+단, `setCount`함수에 `callback` 함수를 전달하고 그 전달한 `callback`함수의 인자로 이전 `state`값을 `React`에서 `callback`함수로 값을 전달해준다.  
+따라서 계속 변경된 이전상태값을 `setCount`의 콜백함수 인자로 전달해 주기때문에 결과적으로 `5`라는 값이 최종적으로 `setCount`에 전달되는 것이다.
+![img](./public/memo/7.state.png)  
+  
+### 정리
+`React`는 `Component`에서 어떤 값에 변화를 주고싶을때  
+일반 변수를 사용하면 안되고 `React`에서 제공하는 `useState`를 사용해야 된다.  
+`useState`에 초기값을 전달해주면 그 결과로 배열을 return 해주는데  
+배열의 첫번째는 `값을 가리키고` 두번재는 그 값을 `업데이트할 수 있는 함수`이다.  
+`setCount`함수는 그 인자로 변경될 값을 전달해 해당 값을 업데이트할 수도 있고  
+`callback` 함수를 통해 이전 상태값을 `React`로 부터 전달받아서 새로운 상태값을 설정할 수 있다.

@@ -6,9 +6,17 @@ export default function Counter() {
     return (
         <div className='counter'>
             <span className='number'>{count}</span>
-            <button className='button' onClick={() => {
-
-                setCount(count+1);}}>Add +</button>
+            <button className='button'
+                    onClick={() => {
+                        setCount((pre) => pre + 1);
+                        setCount((pre) => pre + 1);
+                        setCount((pre) => pre + 1);
+                        setCount((pre) => pre + 1);
+                        setCount((pre) => pre + 1);
+                    }}
+            >
+                Add +
+            </button>
         </div>
     );
 }
