@@ -413,4 +413,166 @@ export default function Counter() {
 `useState`에 초기값을 전달해주면 그 결과로 배열을 return 해주는데  
 배열의 첫번째는 `값을 가리키고` 두번재는 그 값을 `업데이트할 수 있는 함수`이다.  
 `setCount`함수는 그 인자로 변경될 값을 전달해 해당 값을 업데이트할 수도 있고  
-`callback` 함수를 통해 이전 상태값을 `React`로 부터 전달받아서 새로운 상태값을 설정할 수 있다.
+`callback` 함수를 통해 이전 상태값을 `React`로 부터 전달받아서 새로운 상태값을 설정할 수 있다.  
+  
+## React 생애주기(Life Cycle)
+### Mount
+`React`에서 `Mount`는 컴포넌트가 최초로 생성되어 실제 `DOM`에 추가되는 것을 의미합니다.  
+즉, 컴포넌트가 브라우저의 화면에 처음으로 그려질 때를 말합니다. 이 과정을 마운팅(Mounting)이라고 부릅니다.
+
+1. 마운트(Mounting) 메소드 호출 순서
+   * constructor(): 컴포넌트가 생성될 때 호출됩니다.
+   * static getDerivedStateFromProps(): props가 변경될 때마다 호출됩니다.
+   * render(): 컴포넌트를 화면에 그리기 위한 메서드입니다.
+   * componentDidMount(): 컴포넌트가 화면에 마운트된 직후 호출됩니다.
+
+위 메소드들은 컴포넌트가 마운트되는 과정에서 실행되는 메소드들입니다.  
+constructor()는 컴포넌트를 생성할 때 호출되고, getDerivedStateFromProps()는 props가 변경될 때마다 호출됩니다.  
+render()는 컴포넌트를 화면에 그리기 위한 메서드이며, 마지막으로 componentDidMount()는 컴포넌트가 화면에 마운트된 직후 호출됩니다.  
+
+Mounting 단계에서는 컴포넌트의 초기화 작업이 수행됩니다.  
+즉, 컴포넌트가 처음으로 생성되고 브라우저의 실제 DOM에 추가되는 과정에서 초기화 작업이 수행됩니다.  
+이러한 초기화 작업은 componentDidMount()에서 수행되며, 이 단계에서 컴포넌트의 상태나 props를 변경하는 작업도 가능합니다.
+  
+### Updating 단계
+`React`에서 업데이트(Updating) 단계는 컴포넌트가 props나 state의 변경으로 인해 다시 그려져야 할 때 실행되는 단계입니다.  
+
+2. 데이트 단계에서는 다음과 같은 메소드들이 호출됩니다.
+   * static getDerivedStateFromProps(): props가 변경될 때마다 호출됩니다.
+   * shouldComponentUpdate(): 컴포넌트가 업데이트되어야 할지 결정하는 메서드입니다.
+   * render(): 컴포넌트를 화면에 그리기 위한 메서드입니다.
+   * getSnapshotBeforeUpdate(): 컴포넌트가 업데이트되기 직전에 호출됩니다.
+   * componentDidUpdate(): 컴포넌트가 업데이트된 직후 호출됩니다.
+
+getDerivedStateFromProps()는 props가 변경될 때마다 호출되어 props를 state로 변환하는 작업을 수행합니다.  
+shouldComponentUpdate()는 컴포넌트가 업데이트되어야 할지 결정하는 메서드로, true를 반환하면 업데이트가 수행됩니다.  
+render()는 컴포넌트를 화면에 그리기 위한 메서드입니다. getSnapshotBeforeUpdate()는 컴포넌트가 업데이트되기 직전에 호출되어 DOM 변경 전에 새로운 값을 가져오는 작업을 수행합니다.  
+componentDidUpdate()는 컴포넌트가 업데이트된 직후 호출되어 DOM에 대한 작업을 수행합니다.  
+
+업데이트 단계에서는 컴포넌트의 상태나 props가 변경될 때 수행해야 할 작업을 처리합니다.  
+예를 들어, 사용자가 입력한 값을 처리하거나 API로부터 받아온 데이터를 화면에 업데이트하는 등의 작업을 수행합니다.  
+shouldComponentUpdate() 메서드에서 false를 반환하면 해당 컴포넌트의 업데이트를 방지할 수 있으므로, 컴포넌트의 성능 최적화에 활용됩니다.  
+  
+### 언마운트(Unmounting) 
+`React`에서 `언마운트(Unmounting)` 단계는 컴포넌트가 화면에서 제거될 때 실행되는 단계입니다.  
+3. 언마운트 단계에서는 다음과 같은 메소드가 호출됩니다.
+   * componentWillUnmount(): 컴포넌트가 화면에서 언마운트되기 직전 호출됩니다.
+
+componentWillUnmount() 메소드는 컴포넌트가 화면에서 제거되기 직전에 호출되어 컴포넌트의 리소스를 해제하거나,  
+타이머나 이벤트 리스너를 제거하는 등의 작업을 수행합니다. 이 메소드를 이용하여 컴포넌트에서 사용한 자원들을 해제하고,  
+메모리 누수를 방지할 수 있습니다.  
+
+언마운트 단계에서는 컴포넌트가 화면에서 제거되므로, 이후에는 다시 렌더링되지 않습니다. 따라서 컴포넌트에서 사용한 자원들은 모두 해제되어야 합니다. 
+componentWillUnmount() 메소드에서 컴포넌트에서 사용한 리소스들을 해제하는 작업을 수행하여, 메모리 누수를 방지할 수 있습니다.  
+  
+### 오류(Error)  
+`React`에서 `오류(Error)` 단계는 컴포넌트 내부에서 예외가 발생했을 때 실행되는 단계입니다.  
+4. 오류 단계에서는 다음과 같은 메소드들이 호출됩니다.
+   * static getDerivedStateFromError(): 자식 컴포넌트에서 에러가 발생할 때 호출됩니다.
+   * componentDidCatch(): 자식 컴포넌트에서 에러가 발생한 후 호출됩니다.
+
+getDerivedStateFromError() 메소드는 컴포넌트 내부에서 예외가 발생했을 때 호출되어, 예외 정보를 state로 변환하는 작업을 수행합니다.  
+이후, componentDidCatch() 메소드가 호출되어 예외 처리를 담당합니다.  
+componentDidCatch() 메소드에서는 예외 처리를 위해 에러 메시지를 화면에 출력하거나 로깅하는 등의 작업을 수행할 수 있습니다.  
+
+오류 단계에서는 컴포넌트가 예외를 처리하고, 다른 컴포넌트와의 상호작용을 멈춥니다.  
+이를 통해 애플리케이션의 안정성을 유지할 수 있습니다.  
+따라서 오류 단계에서는 컴포넌트가 예외를 처리하고, 사용자에게 오류 메시지를 제공하여 사용성을 높일 수 있습니다.  
+
+
+## useEffect 생애주기
+![img](./public/memo/useEffect.png)  
+`public/data`에 있는 json 파일을 동적으로 읽어서 화면에 보여주자.  
+```
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <AppProduct/>
+  </React.StrictMode>
+);
+```
+```
+import './App.css';
+import {useState} from "react";
+import Products from "./components/Products";
+
+export default function AppProduct() {
+    const [showProducts, setShowProducts] = useState(true);
+   return (
+    <div>
+        {showProducts && <Products/>}
+        <button onClick={() => setShowProducts((show)=>!show)}>Toggle</button>
+    </div>
+   );
+}
+```
+```
+import {useState} from "react";
+
+export default function Products() {
+    const [count,setCount] = useState(0);
+    const [products,setProducts] = useState([]);
+    // public 에 있는 jon 파일을 동적으로 불러오는 방법1
+    fetch('data/products.json')
+        .then(res => res.json())
+        .then(data => {
+            console.log('데이터를 받아옴');
+            setProducts(data);
+        });
+    return(
+        <>
+            <ul>
+                {
+                    products.map((product)=>(
+                        <li key={product.id}>
+                            <article>
+                                <h3>{product.name}</h3>
+                                <p>{product.price}</p>
+                            </article>
+                        </li>
+                    ))
+                }
+            </ul>
+            <button onClick={() => setCount((pre)=>pre+1)}>{count}</button>
+        </>
+    );
+}
+```  
+  
+브라우저에서 제공해주는 `fetch()`API에 인자로 상대경로를 전달해주면  
+기본적으로 `public`디렉토리를 기준으로 데이터를 비동기적으로 읽어오는데  
+이렇게 읽어온 값을 `then(res => res.json())` `json` 값으로 변환하고  
+잘 변환되었다면 우리의 state `products`에 그값을 설정해 줄것이다.  
+![img](./public/memo/2.useEffect.png)  
+해당 화면처럼 `json`데이터를 잘 불러온 것을 확인할 수 있다.  
+하지만 개발자 도구를 열어서 확인해보면 끊임 없이 데이터를 읽어오는 것을 확인할 수 있다.  
+![img](./public/memo/3.useEffect.png)  
+왜 이런 현상이 발생하는 것일까??  
+우리는 `setProducts`를 이용해서 상태를 업데이트 하고있다.  
+그러면 상태가 변경된 `component` 함수를 `react`에서 다시 호출한다.  
+함수가 다시호출되면 함수안에있는 `fetch`함수도 다시 호출된다.  
+`fetch`가 호출되서 다시 데이터를 받아오고 상태값이 변경되었으니 다시 `component`함수를 호출한다.  
+  
+따라서, 이러한 무한 루프에 빠지지않기 위해서는 이 해당 `Component`를 호출 했을때  
+딱 한번만 네트워크 통신을 통해서 데이터를 받아오고 그 뒤로는 네트워크 통신을 통해서 데이터를 받아오지 않게 해야한다.  
+  
+이렇게 할 수 있게 해주는 것이 `useEffect`이다.  
+```
+    useEffect(()=>{
+        fetch('data/products.json')
+            .then(res => res.json())
+            .then(data => {
+                console.log('데이터를 받아옴');
+                setProducts(data);
+            });
+        return () => {
+            console.log('데이터 통신 종료')
+        };            
+    },[]);
+```  
+첫번째 인자로 `callback`함수를 전달하고 두번째인자로 배열형태의 디펜던시를 전달해주면된다.  
+이 두번째 인자는 해당 `Component`에서 참조하는 상태나 `props`의 배열이다.  
+만약 빈 배열인 경우에는 컴포넌트가 매운트될때 한번만 수행한다.  
+만약 우리가 전달한 `callback`함수를 `useEffect`에서 처리를 하고 `component`가 언마운트될때(component가 삭제될때)  
+어떤 작업을 수행해야 된다면 예를들어 메모리를 정리하거나 네트워크 통신을 `close`해야 된다던지 하는 작업을 처리해야 한다면  
+useEffect callback 함수에 return 으로 언마운트시 수행할 함수를 전달해 주면된다.
