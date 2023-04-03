@@ -45,7 +45,17 @@
 }
 .container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
+}
+.container-title {
+  font-size: 1.5rem;
+  width: 20rem;
+  background: yellow;
+  font-weight: bold;
+  text-align: center;
+  margin: 5rem 0 0.2rem 0;
 }
 .counter {
   display: flex;
