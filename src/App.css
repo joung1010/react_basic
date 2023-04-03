@@ -51,7 +51,7 @@
 }
 .container-title {
   font-size: 1.5rem;
-  width: 20rem;
+  width: 25rem;
   background: yellow;
   font-weight: bold;
   text-align: center;
@@ -64,7 +64,7 @@
   justify-content: center;
   border: 2px rgb(215,127,12) solid;
   border-radius: 1rem;
-  width: 14rem;
+  width: 20rem;
   height: 12rem;
   margin: 2rem;
   padding: 1rem;
@@ -85,4 +85,8 @@
   border-radius: 0.5rem;
   padding: 0.5rem;
   cursor: pointer;
+}
+.total {
+  font-size: 1rem;
+  margin-left: -1.5rem;
 }
