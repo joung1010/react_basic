@@ -575,4 +575,24 @@ export default function Products() {
 만약 빈 배열인 경우에는 컴포넌트가 매운트될때 한번만 수행한다.  
 만약 우리가 전달한 `callback`함수를 `useEffect`에서 처리를 하고 `component`가 언마운트될때(component가 삭제될때)  
 어떤 작업을 수행해야 된다면 예를들어 메모리를 정리하거나 네트워크 통신을 `close`해야 된다던지 하는 작업을 처리해야 한다면  
-useEffect callback 함수에 return 으로 언마운트시 수행할 함수를 전달해 주면된다.
+useEffect callback 함수에 return 으로 언마운트시 수행할 함수를 전달해 주면된다.  
+  
+### 두번재 인자 사용예시
+```
+const [checked, setChecked] = useState(false);
+
+    useEffect(()=>{
+        fetch(`data/${checked ? 'sale_' : ''}products.json`)
+            .then(res => res.json())
+            .then(data => {
+                console.log('데이터를 받아옴');
+                setProducts(data);
+            });
+        return () => {
+            console.log('데이터 통신 종료')
+        };
+    },[checked]);
+```
+이렇게 되면 `checked` state 가 변경될때 마다 `useEffect()`가 다시 호출되게 된다.  
+![img](./public/memo/4.useEffect.png)  
+![img](./public/memo/5.useEffect.png)  
