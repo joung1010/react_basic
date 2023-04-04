@@ -596,3 +596,42 @@ const [checked, setChecked] = useState(false);
 이렇게 되면 `checked` state 가 변경될때 마다 `useEffect()`가 다시 호출되게 된다.  
 ![img](./public/memo/4.useEffect.png)  
 ![img](./public/memo/5.useEffect.png)  
+  
+## 고유한Key
+![key.png](./public/memo/key.png)  
+해당 `warning`이 왜 나오는 것일까??  
+그것은 React 에서 배열을 활용해서 자식요소를 만들때에는 해당 자식들의 고유한 `key`값을 전달해 주지 않으면 해당 경고가 나온다.  
+기존코드  
+```
+            <ul>
+                {
+                    products.map((product)=>(
+                        <li>
+                            <article>
+                                <h3>{product.name}</h3>
+                                <p>{product.price}</p>
+                            </article>
+                        </li>
+                    ))
+                }
+            </ul>
+```  
+변경 코드  
+```
+            <ul>
+                {
+                    products.map((product)=>(
+                        <li key={product.id} >
+                            <article>
+                                <h3>{product.name}</h3>
+                                <p>{product.price}</p>
+                            </article>
+                        </li>
+                    ))
+                }
+            </ul>
+```
+`React`에서 자식요소를 사용할때는 고유한 `key`값을 부여해 줘야  
+`React`내부에서 해당건은 동이한 `key`값이네 업데이트 안해도 되겠다.  
+혹은 이건은 업데이트 해야겠다, 배열에서 위치 변경될때도 이 `key`값을 기준으로 업데이트 할건지 다시 랜더링할건지를 판단하기때문에  
+`Array.map()`을 이용해서 자식요소를 생성할 때는 `key attribute`에 값을 전달해 줘야 한다. 
