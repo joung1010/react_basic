@@ -29,4 +29,31 @@ export default function App() {
         </div>
     );
 ```
+현 코드에서 개선할 점은 더 없는 것일까??  
+일단 먼저 `state`값인 `x`와 `y`가 개별적으로 존재하고 있고  
+업데이트 할때도 `setX`, `setY`도 마찬가지이다.  
+이대로 작성해도 상관은 없지만 `좌표`라는 연관된 데이터임에도 불구하고 상태를 따로 관리하고 있다.  
+위와 같이 연관있는 데이터는 `React`에서도 객체로 관리하는 것이 좋다.  
+  
+물론 최신 `React`에서는 하나의 `callback`함수내에서 `set`을 여러번 하면  `React`에서 이 여러번의 `set`을 한번에 묶어서 동시에 `update`한다.  
+즉, `React`에서 하나의 콜백안에서 여러개의 `set`으로 상태를 `update`하고 그것을 전부 묶어서 `Virtual DOM`을 만들어서 브라우저에 효율적으로 업데이트한다.
+하지만 이것도 100퍼센트 보장해주는 것은 아니다.(비동기를 이용해서 여러군데에서 `set`을 호출했을때)  
+객체로 관리
+```
+export default function App() {
+    const [position, setPosition] = useState({x: 0, y: 0});
+
+
+    const handlePointMove = (e) => {
+        setPosition({x:e.clientX, y: e.clientY});
+    }
+    return (
+        <div className='container' onPointerMove={handlePointMove}>
+            <div className='pointer' style={{transform: `translate(${position.x}px,${position.y}px)`}}/>
+        </div>
+    );
+};
+```
+
+
 
