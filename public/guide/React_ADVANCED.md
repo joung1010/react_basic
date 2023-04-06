@@ -95,3 +95,34 @@ setPerson((person) => ({...person,mentor:{...person.mentor,name}}));
 
 ```
 
+## 이중 구조분해할당(심화)
+내코드
+```
+    const [person, setPerson] = useState({
+        name: '박정환',
+        title: '개발자',
+        mentors:[
+            {
+                name:'밥',
+                title : '시니어개발자',
+            },
+            {
+                name:'제임스',
+                title : '시니어개발자',
+            },
+        ]
+    });
+    
+  const pre = prompt(`누구의 이름을 바꾸고 싶은가요?`);
+                    const current = prompt(`이름을 무엇으로 바꾸고 싶은가요?`);
+                    setPerson((person) => ({...person
+                        ,mentors: person.mentors.map((mentor) => {
+                            if (mentor.name === pre) {
+                                return {...mentor, name: current};
+                            } else {
+                                return mentor;
+                            }
+                        })
+                    }));    
+```
+
