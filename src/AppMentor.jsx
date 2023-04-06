@@ -20,17 +20,7 @@ export default function AppMentor() {
             <button
             onClick={() => {
                 const name = prompt(`what's your mentor's name?`);
-                setPerson((pre) => {
-                    const {name: myName, title: myTitle, mentor: {name: mentorName, title: mentorTitle}} = pre;
-                    return {
-                        name: myName,
-                        title: myTitle,
-                        mentor: {
-                            name: name,
-                            title: mentorTitle
-                        },
-                    };
-                });
+                setPerson((person) => ({...person,mentor:{...person.mentor,name}}));
             }}
             >
                 멘토 이름 바꾸기
@@ -38,17 +28,7 @@ export default function AppMentor() {
             <button
                 onClick={() => {
                     const title = prompt(`what's your mentor's title?`);
-                    setPerson((pre) => {
-                        const {name: myName, title: myTitle, mentor: {name: mentorName, title: mentorTitle}} = pre;
-                        return {
-                            name: myName,
-                            title: myTitle,
-                            mentor: {
-                                name: mentorName,
-                                title: title
-                            },
-                        };
-                    });
+                    setPerson((person) => ({...person,mentor:{...person.mentor,title}}));
 
                 }}
             >
