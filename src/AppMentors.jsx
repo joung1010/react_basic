@@ -4,14 +4,14 @@ export default function AppMentors() {
     const [person, setPerson] = useState({
         name: '박정환',
         title: '개발자',
-        mentors:[
+        mentors: [
             {
-                name:'밥',
-                title : '시니어개발자',
+                name: '밥',
+                title: '시니어개발자',
             },
             {
-                name:'제임스',
-                title : '시니어개발자',
+                name: '제임스',
+                title: '시니어개발자',
             },
         ]
     });
@@ -23,7 +23,7 @@ export default function AppMentors() {
             <p>{person.name}의 멘토</p>
             <ul>
                 {
-                    person.mentors.map((mentor,index) => (
+                    person.mentors.map((mentor, index) => (
                         <li key={index}>
                             {mentor.name}({mentor.title})
                         </li>
@@ -34,13 +34,14 @@ export default function AppMentors() {
                 onClick={() => {
                     const pre = prompt(`누구의 이름을 바꾸고 싶은가요?`);
                     const current = prompt(`이름을 무엇으로 바꾸고 싶은가요?`);
-                    setPerson((person) => ({...person
-                        ,mentors: person.mentors.map((mentor) => {
+                    setPerson((person) => ({
+                        ...person
+                        , mentors: person.mentors.map((mentor) => {
                             if (mentor.name === pre) {
                                 return {...mentor, name: current};
-                            } else {
-                                return mentor;
                             }
+                            return mentor;
+
                         })
                     }));
                 }}
