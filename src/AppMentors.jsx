@@ -1,20 +1,38 @@
 import {useState} from "react";
 
 export default function AppMentors() {
-    const [person, setPerson] = useState({
-        name: '박정환',
-        title: '개발자',
-        mentors: [
-            {
-                name: '밥',
-                title: '시니어개발자',
-            },
-            {
-                name: '제임스',
-                title: '시니어개발자',
-            },
-        ]
-    });
+    const [person, setPerson] = useState(initialPerson);
+    const handleUpdate = () => {
+        const pre = prompt(`누구의 이름을 바꾸고 싶은가요?`);
+        const current = prompt(`이름을 무엇으로 바꾸고 싶은가요?`);
+        setPerson((person) => ({
+            ...person
+            , mentors: person.mentors.map((mentor) => {
+                if (mentor.name === pre) {
+                    return {...mentor, name: current};
+                }
+                return mentor;
+
+            })
+        }));
+    }
+    const handleAdd = () => {
+        const name = prompt(`추가할 멘토의 이름을 입력해주세요.`);
+        const title = prompt(`추가할 멘토의 타이틀을 입력해주세요.`);
+        setPerson((people) => ({
+                ...people
+                , mentors: [...people.mentors
+                    , {name, title}]
+            })
+        );
+    };
+    const handleDelete = () => {
+        const name = prompt(`삭제할 멘토이름을 입력하세요`);
+        setPerson((person) => ({
+            ...person,
+            mentors: person.mentors.filter((mentor) => mentor.name !== name)
+        }))
+    };
     return (
         <div>
             <h1>
@@ -30,51 +48,26 @@ export default function AppMentors() {
                     ))
                 }
             </ul>
-            <button
-                onClick={() => {
-                    const pre = prompt(`누구의 이름을 바꾸고 싶은가요?`);
-                    const current = prompt(`이름을 무엇으로 바꾸고 싶은가요?`);
-                    setPerson((person) => ({
-                        ...person
-                        , mentors: person.mentors.map((mentor) => {
-                            if (mentor.name === pre) {
-                                return {...mentor, name: current};
-                            }
-                            return mentor;
-
-                        })
-                    }));
-                }}
-            >
-                멘토 이름 바꾸기
-            </button>
+            <button onClick={handleUpdate}>멘토 이름 바꾸기</button>
             &nbsp;
-            <button
-                onClick={() => {
-                    const name = prompt(`추가할 멘토의 이름을 입력해주세요.`);
-                    const title = prompt(`추가할 멘토의 타이틀을 입력해주세요.`);
-                    setPerson((people) => ({
-                            ...people
-                            , mentors: [...people.mentors
-                            , {name, title}]
-                        })
-                    );
-                }}
-            >
-                추가하기
-            </button>
+            <button onClick={handleAdd}>추가하기</button>
             &nbsp;
-            <button
-                onClick={()=>{
-                    const name = prompt(`삭제할 멘토이름을 입력하세요`);
-                    setPerson((person)=>({
-                        ...person,
-                        mentors:person.mentors.filter((mentor)=> mentor.name !== name)
-                    }))
-                }}
-            >
-                삭제하기
-            </button>
+            <button onClick={handleDelete}>삭제하기</button>
         </div>
     );
 }
+
+const initialPerson = {
+    name: '박정환',
+    title: '개발자',
+    mentors: [
+        {
+            name: '밥',
+            title: '시니어개발자',
+        },
+        {
+            name: '제임스',
+            title: '시니어개발자',
+        },
+    ]
+};
