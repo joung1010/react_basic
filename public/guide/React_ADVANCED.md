@@ -154,5 +154,99 @@ setPerson((person) => ({...person,mentor:{...person.mentor,name}}));
   
 하지만, 최신 `React`에서는 `React Hook` `useState`을 이용해서 충분히 상태관리를 할 수 있고  
 상태를 관리하는 코드(새롭게 객체를 생성, 변경, 삭제등)들을 재사용하고 싶다면 `useReducer`를 사용할 수도 있다.  
-또한, 다수의 여러개의 `Component`의 상태를 관리하고 싶다면 `context api` 를 이용해서 관리 할 수 있다.
+또한, 다수의 여러개의 `Component`의 상태를 관리하고 싶다면 `context api` 를 이용해서 관리 할 수 있다.  
+  
+## useReducer  
+기존에 사용했던 상태를 업데이트 하는 로직을 다른 `component`에서 재사용하고싶다.  
+기존의 상태코드를 관리하는 코드들 한곳에 묶어두고 `useState`대신 `useReducer`를 사용할 수 있다.
+```
+    const handleUpdate = () => {
+        const pre = prompt(`누구의 이름을 바꾸고 싶은가요?`);
+        const current = prompt(`이름을 무엇으로 바꾸고 싶은가요?`);
+        setPerson((person) => ({
+            ...person
+            , mentors: person.mentors.map((mentor) => {
+                if (mentor.name === pre) {
+                    return {...mentor, name: current};
+                }
+                return mentor;
 
+            })
+        }));
+    }
+    const handleAdd = () => {
+        const name = prompt(`추가할 멘토의 이름을 입력해주세요.`);
+        const title = prompt(`추가할 멘토의 타이틀을 입력해주세요.`);
+        setPerson((people) => ({
+                ...people
+                , mentors: [...people.mentors
+                    , {name, title}]
+            })
+        );
+    };
+    const handleDelete = () => {
+        const name = prompt(`삭제할 멘토이름을 입력하세요`);
+        setPerson((person) => ({
+            ...person,
+            mentors: person.mentors.filter((mentor) => mentor.name !== name)
+        }))
+    };
+```
+이떄 `useReducer`을 사용할 수 있다.
+```
+function personReducer(person, action) {
+    switch (action.type) {
+        case 'updated': {
+            const {prev, curr} = action;
+            return {
+                ...person
+                , mentors: person.mentors.map((mentor) => {
+                    if (mentor.name === prev) {
+                        return {...mentor, name: curr};
+                    }
+                    return mentor;
+                })
+            };
+        }
+        case 'added':{
+            const {name, title} = action;
+            return {
+                ...person
+                , mentors: [...person.mentors
+                    , {name, title}]
+            };
+        }
+        case 'deleted':{
+            const {name} = action;
+            return {
+                ...person,
+                mentors: person.mentors.filter((mentor) => mentor.name !== name)
+            };
+        }
+        default : {
+            throw Error(`알수없는 action type 이다: ${action.type}`);
+        }
+    }
+}
+
+```
+```
+const [person, dispatch] = useReducer(personReducer,initialPerson);
+```  
+`useState`와 유사하지만 `useReducer`는 첫번째 인자로 우리가 `새롭게 객체를 만들어 나갈 함수`를 전달해주고  
+두번째 인자로 `상태의 초기값`을 전달해 주면 된다.  
+  
+결과 값으로는 `state` 와 우리가 인자로 전달한 함수를 호출할 수 있는`dispatch`함수를 반환 받는다.  
+`useState` 에서 `setPerson`으로 상태 값을 `update`한 것처럼 `dispatch`를 통해서 우리가 원하는 `action`을 명령할 수 있다.  
+  
+예제
+```
+    const handleUpdate = () => {
+        const prev = prompt(`누구의 이름을 바꾸고 싶은가요?`);
+        const curr = prompt(`이름을 무엇으로 바꾸고 싶은가요?`);
+        dispatch({type:'updated',prev:prev,curr})
+    }
+```  
+위와 같이 `dispatch` 함수의 인자로 `action`객체를 전달해주면  
+`dispatch`가 호출되면서 `useReducer`가 자동으로 우리가 전달한 함수(personReducer)를 호출해준다.  
+이때 기존의 `person`객체와 `dispatch`에 전달한 `action`객체를 `personReducer`함수에 전달해준다.
