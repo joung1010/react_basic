@@ -336,3 +336,82 @@ updatePerson(person => person.mentors.push({name, title}));
 //변경 후
 updatePerson(person => {person.mentors.push({name, title})});
 ```
+  
+## Form을 만드는 법
+```
+import React from "react";
+
+export default function AppForm() {
+    const handleSubmit = (e) => {
+        e.preventDefault();
+    };
+
+    return(
+        <form onSubmit={handleSubmit}>
+            <label htmlFor="name">이름:</label>
+            <input type="text" id="name" name="name"/>
+            <label htmlFor="email">이메일:</label>
+            <input type="email" id="email" name="email"/>
+            <button>Submit</button>
+        </form>
+    );
+}
+```  
+onSubmit 이벤트가 발생할때 `e.preventDefault();` 하는 이유는 해당 이벤트가 발생했을때  
+자동적으로 브라우저가 `refresh`되기 때문에 새로고침을 원하지 않으면 `preventDefault()`를 사용하면 된다.  
+  
+`React`의 철학은 모든 `UI`의 업데이트는 상태의 변경으로부터 발생해야한다.  
+예를들어 사용자가 무언가를 클릭했을때 `UI`가 업데이트 되어야만 한다면 `React Component`자체적으로 가지고있는 상태가 변경이 되면서  
+`UI`가 업데이트 되어야한다.  
+  
+하지만, 이런 입력 `Form`은 바로바로 입력을 하면 `UI`상에 즉각적으로 보이는 것을 확인할 수 있다.  
+`React`의 상태 값을 업데이트 하지 않았음에도 불구하고 말이다.
+![img](../memo/form.png)  
+  
+이러한 `Component`를 `uncontrolled component`라고한다.  
+그래서 이러한 경우에는 입력 `Form`은 `React Component`의 상태와  똑같이 매칭시키는 것이 중요하다.  
+```
+export default function AppForm() {
+    const [name,setName] = useState('');
+    const [email,setEmail] = useState('');
+    const handleSubmit = (e) => {
+        e.preventDefault();
+    };
+
+    return(
+        <form onSubmit={handleSubmit}>
+            <label htmlFor="name">이름:</label>
+            <input type="text" id="name" name="name" value={name} onChange={(e) => {setName(e.target.value)}}/>
+            <label htmlFor="email">이메일:</label>
+            <input type="email" id="email" name="email" value={email} onChange={(e) => {setEmail(e.target.value)}}/>
+            <button>Submit</button>
+        </form>
+    );
+}
+
+```  
+개선  
+```
+export default function AppForm() {
+    const [form, setForm] = useState({name:'',email:''});
+    const handleSubmit = (e) => {
+        e.preventDefault();
+    };
+    const handleChange = (e) => {
+        const {name, value} = e.target;
+        setForm({...form,[name]:value});
+    };
+    return (
+        <form onSubmit={handleSubmit}>
+            <label htmlFor="name">이름:</label>
+            <label htmlFor="email">이메일:</label>
+            <input type="text" id="name" name="name" value={form.name} onChange={handleChange}/>
+            <input type="email" id="email" name="email" value={form.email} onChange={handleChange} />
+            <button>Submit</button>
+        </form>
+    );
+}
+```  
+유심해야할 코드 `setForm({...form,[name]:value});`  동적으로 객체에 접근해서 변경된 객체 값만 바꾼다.
+
+이런식으로 `Form`과 `React Component의 state`상태 값을 매핑 시킴으로써 우리가 관리하는 `Component`가 되는 것이다.
