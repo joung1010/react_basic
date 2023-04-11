@@ -249,4 +249,90 @@ const [person, dispatch] = useReducer(personReducer,initialPerson);
 ```  
 위와 같이 `dispatch` 함수의 인자로 `action`객체를 전달해주면  
 `dispatch`가 호출되면서 `useReducer`가 자동으로 우리가 전달한 함수(personReducer)를 호출해준다.  
-이때 기존의 `person`객체와 `dispatch`에 전달한 `action`객체를 `personReducer`함수에 전달해준다.
+이때 기존의 `person`객체와 `dispatch`에 전달한 `action`객체를 `personReducer`함수에 전달해준다.  
+  
+  
+## Immer 라이브러리 사용하기
+1. [immer github](https://github.com/immerjs/immer)
+2. [immer 공식사이트](https://immerjs.github.io/immer/)  
+  
+`immer`는 불변성을 유지하는 작업을 간단하게 만들어주는 라이브러리이다.  
+이를 용하면 JS의 `Array` 와 `object`와 같은 객체를 수정할 때 새로운 객체를 생성하고 복사하는 것이 아니라,  
+기존 객체를 수정하는 방식으로 작업할 수 있다.  
+이를 이용해서 `React` 나 `Redux` 같은 라이브러리에서의 상태값을 관리하는 작업을 보다 간단하게 처리할 수 있다.  
+  
+`immer` 라이브러리의 핵심은 `불변성을 유지하는 작업을 하지만 코드는 변경 가능한 객체를 다루는 것처럼 작성한다`는 것이다.  
+예를 들어, JS의 `Array`, `Object`와 같은 객체를 수정할 때,  
+일반적으로는 새로운 객체를 생성하고 복사하는 것이 일반적입니다.  
+그러나 이 방식은 코드를 복잡하고 성능을 떨어뜨리기 때문에 `immer`는 다르게 접근합니다.  
+  
+따라서, `immer`는 구조 공유(Structural Sharing)라는 기술을 사용하여 변경이 필요한 객체를 찾고, 이전 객체와 구조를 공유하는 새로운 객체를 만듭니다.  
+`immer`는 변경 작업을 수행할 때마다 수정 레코드(Modification Record)라는 것을 생성합니다.  
+이는 변경 작업을 수행하는 함수가 반환하는 객체에 저장되며, 이전 객체와의 차이를 나타냅니다.  
+수정 레코드는 이전 객체를 참조하는 포인터와 변경 사항을 포함하는 일련의 작업으로 이루어져 있습니다.  
+`immer`는 이 정보를 사용하여 새로운 객체를 생성하고, 이전 객체와 구조를 공유합니다.  
+  
+즉, 객체를 변경할 때 새로운 객체를 생성하지 않고, 이전 객체를 수정하는 방식으로 작업할 수 있습니다.  
+이는 코드를 간결하게 만들어주고, 성능도 향상시킬 수 있습니다.  
+  
+예제 코드  
+[use-immer](https://github.com/immerjs/use-immer)
+```
+import React from "react";
+import { useImmer } from "use-immer";
+
+
+function App() {
+  const [person, updatePerson] = useImmer({
+    name: "Michel",
+    age: 33
+  });
+
+  function updateName(name) {
+    updatePerson(draft => {
+      draft.name = name;
+    });
+  }
+
+  function becomeOlder() {
+    updatePerson(draft => {
+      draft.age++;
+    });
+  }
+
+  return (
+    <div className="App">
+      <h1>
+        Hello {person.name} ({person.age})
+      </h1>
+      <input
+        onChange={e => {
+          updateName(e.target.value);
+        }}
+        value={person.name}
+      />
+      <br />
+      <button onClick={becomeOlder}>Older</button>
+    </div>
+  );
+}
+```
+  
+설치방법  
+```
+yarn add immer use-immer
+yarn add -d immer use-immer (-d 옵션을 주면 개발용 라이브러리 추가 옵션)
+```  
+  
+오류 사항  
+```
+An immer producer returned a new value *and* modified its draft. Either return a new value *or* modify the draft.
+```  
+에러 이유  
+{} 괄호가 없는 화살표 함수는 return 문으로 작동하기 때문에 에러가 발생  
+```
+// 변경 전
+updatePerson(person => person.mentors.push({name, title}));
+//변경 후
+updatePerson(person => {person.mentors.push({name, title})});
+```
