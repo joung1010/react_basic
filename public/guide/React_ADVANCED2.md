@@ -97,4 +97,76 @@ export default function Navbar({children}) {
 `테마` 나 `로그인` 같은 정보는 전체적으로 모든 `Component`에서 `Context API`를 사용하고  
 어느 특정 `Component`들 사이의 데이터를 공유해야한다면(빈번이 변경) 꼭 필요한 부분에만 `Context API`를 적용하면 된다.  
 
+### 사용법
+`React`에서 `Context API`를 사용하려면 `React.createContext`메소드를 이용해서 `Context` 객체를 생성한 후  
+`Context.Provider` 컴포넌트를 사용하여 전달할 데이터를 감싸고, 하위 `Component`에게 전달할 수 있다.
+  
+조금더 쉽게 생각해 보자면  
+`Context` 객체가 우리가 필요한 데이터를 담고 있을 것이다.  
+이 `Provider`는 가지고 있는 데이터를 가지고 우산처럼 쫙 펼처서 어느 자식 `Component` 까지 영향을 줄지를 결정한다.
+  
+```
+import {createContext} from "react";
 
+export const DarkModeContext = createContext();
+
+export function DarkModeProvider({children}) {
+    const [darkMode, setDarkMode] = useState(false);
+    const toggleDarkMode = () => setDarkMode(mode => !mode);
+    
+    return (
+      <DarkModeContext.Provider>
+          {children}
+      </DarkModeContext.Provider>  
+    );
+}
+```  
+이 `Provider`는 일반 `Component`와 똑같은데 외부에서 `Component`를 받을 수 있는 `Component`이다  
+그래서 이 `Provider Component`는 UI 적으로 어떤 동작을 하지 않지만 전달받은 `Component`를 감싸는 역할을 한다.  
+따라서 우리가 전달받은 자식 `Component`에 `Provider`가 가지고 있는 상태를 전달하고 싶다면  `value` `props`에 값을 전달해주면 된다.  
+
+```
+      <DarkModeContext.Provider
+        value={{darkMode, toggleDarkMode}}
+      >
+          {children}
+      </DarkModeContext.Provider>
+```
+  
+이렇게 필요한 부분에 우산을 씌워주면 된다.  
+그럼 우산을 씌운 하위 `Component`에서  `useContext(context명)`을 이용해서
+우리가 전달한 공통된 데이터에 접근이 가능하다.
+```
+export default function AppTheme() {
+    return (
+        <DarkModeProvider>
+            <Header/>
+            <Main/>
+            <Footer/>
+        </DarkModeProvider>
+    )
+}
+```  
+```
+function ProductDetail() {
+    const {darkMode, toggleDarkMode} = useContext(DarkModeContext);
+    return (
+        <div>
+            Product Detail
+            <p>DarkMode:
+                {
+                    darkMode ? (
+                            <span style={{backgroundColor: 'black', color: 'white'}}>
+                            Dark Mode
+                        </span>
+                        ) :
+                        (
+                            <span>Light Mode</span>
+                        )
+                }
+            </p>
+            <button onClick={() => toggleDarkMode()}>Toggle</button>
+        </div>
+    );
+}
+```
