@@ -170,3 +170,182 @@ function ProductDetail() {
     );
 }
 ```
+
+## 성능 개선
+```
+import {useReducer, useState} from "react";
+import personReducer from "./reducer/person-reducer";
+
+export default function AppMentorsButton() {
+    const [person, dispatch] = useReducer(personReducer,initialPerson);
+
+    const handleUpdate = () => {
+        const prev = prompt(`누구의 이름을 바꾸고 싶은가요?`);
+        const curr = prompt(`이름을 무엇으로 바꾸고 싶은가요?`);
+        dispatch({type: 'updated', prev, curr});
+    }
+    const handleAdd = () => {
+        const name = prompt(`추가할 멘토의 이름을 입력해주세요.`);
+        const title = prompt(`추가할 멘토의 타이틀을 입력해주세요.`);
+        dispatch({type: 'added', name, title});
+    };
+    const handleDelete = () => {
+        const name = prompt(`삭제할 멘토이름을 입력하세요`);
+        dispatch({type: 'deleted', name,});
+    };
+    return (
+        <div>
+            <h1>
+                {person.name}는 {person.title}
+            </h1>
+            <p>{person.name}의 멘토</p>
+            <ul>
+                {
+                    person.mentors.map((mentor, index) => (
+                        <li key={index}>
+                            {mentor.name}({mentor.title})
+                        </li>
+                    ))
+                }
+            </ul>
+            <Button onClick={handleUpdate} text={`멘토 이름 바꾸기`} />
+            &nbsp;
+            <Button onClick={handleAdd} text={`추가하기`}/>
+            &nbsp;
+            <Button onClick={handleDelete} text={`삭제하기`} />
+        </div>
+    );
+}
+
+function Button({text,onClick}) {
+    console.log('Button',text,'re-rendering haha')
+    const result = calculateSomething();
+    return(
+        <button
+        onClick={onClick}
+        style={
+            {
+                backgroundColor: 'black',
+                color:'white',
+                borderRadius:'20px',
+                margin:'0.4rem',
+                cursor:'pointer',
+            }
+        }
+        >
+            {`${text} ${result}` }
+        </button>
+    );
+}
+
+function calculateSomething() {
+    for (let i = 0; i < 10000; i++) {
+        console.log(`😍`);
+    }
+    return 10;
+}
+
+const initialPerson = {
+    name: '박정환',
+    title: '개발자',
+    mentors: [
+        {
+            name: '밥',
+            title: '시니어개발자',
+        },
+        {
+            name: '제임스',
+            title: '시니어개발자',
+        },
+    ]
+};
+```
+
+버튼 `component`가 다시 호출될때 뭔가 복잡한 로직이 있다는 것을 임시적으로 나타내기 위해서 `for` 루프를 사용하였다.  
+이렇게 되면 가장 상위 `Component` Mentors 가 변경될때 마다 모든 `Button Component`가 다시 `render`되서 성능저하가 발생한다.  
+  
+### 개선방법  
+어떤 `Component` 안에서 무거운 로직을 수행할때 이 로직이 매번 실행되는 것이 아니라면 처음에만 호출 되어야만 한다면  
+`useEffect`를 사용할 수 있다.  
+  
+또는 `useMemo`를 사용 할 수 있다.  
+### useMemo
+React의 `useMemo`는 `메모이제이션(Memoization)`을 사용하여 성능을 최적화하는 `React Hook`이다.  
+`메모이제이션(Memoization)`이란 이전에 계산한 결과를 저장하고, 이후 같은 입력이 들어올 때 다시 계산하지 않고 저장된 결과를 반환하는 기술이다.  
+즉, `useMemo`는 함수형 컴포넌트에서 계산 비용이 많이 드는 연산의 결과 값을 캐시합니다.  
+첫번째 인자로 계산하고자 하는 함수를 두번째 인자로는 함수가 의존하는 값의 배열을 전달합니다.  
+이때 두번째 인자값을 빈 배열로 전달하면 딱 한번만 수행한다.(렌더링 될때 한번)  
+```
+function Button({text,onClick}) {
+    console.log('Button',text,'re-rendering haha')
+    const result = useMemo(() => calculateSomething(), []);
+    // const result = useMemo(() => calculateSomething(), [text]);
+    return(
+        <button
+        onClick={onClick}
+        style={
+            {
+                backgroundColor: 'black',
+                color:'white',
+                borderRadius:'20px',
+                margin:'0.4rem',
+                cursor:'pointer',
+            }
+        }
+        >
+            {`${text} ${result}` }
+        </button>
+    );
+}
+```
+  
+### useCallback
+React의 `useCallback` 훅은 함수형 컴포넌트에서 성능 최적화를 위해 사용된다.  
+. 첫 번째 파라미터는 메모이제이션 할 콜백 함수이고, 두 번째 파라미터는 의존성 배열이다.  
+이 배열에 포함된 값이 변경될 때만 메모이제이션된 함수가 새롭게 생성된다.  
+메모이제이션된 함수는 컴포넌트가 리렌더링될 때마다 다시 생성되는 것이 아니라, 이전에 생성된 함수를 재사용하여 성능상 이점을 가져온다.
+
+```
+    const handleUpdate = useCallback(() => {
+        const prev = prompt(`누구의 이름을 바꾸고 싶은가요?`);
+        const curr = prompt(`이름을 무엇으로 바꾸고 싶은가요?`);
+        dispatch({type: 'updated', prev, curr});
+    }, []);
+```  
+  
+### useCallback 과 useMemo의 차이점  
+두 함수 모두 컴포넌트의 성능 최적화를 위해 사용된다.  
+단 `useCallback`은 함수 그자체를 캐시하고 `useMemo`는 계산 비용이 많이 드는 연산의 결과 값을 캐시한다.
+  
+### memo
+위와 같은 방법으로 성능을 개선해도 상위 컴포넌트가 변경되면 하위 컴포넌트 자체는 다시 호출된다.  
+즉 하위 컴포넌트에 전달되는 `props`는 매번 다른 객체값으로 할당 되기때문인데  
+이를 실제 객체 안의 값이 변경되지 않으면 다시 호출되지 않도록 기억하는 것이 `memo`이다.  
+  
+`memo는` React에서 제공하는 고차 컴포넌트(Higher-Order Component)이다.  
+이 컴포넌트는 React에서 컴포넌트 최적화를 위해 사용된다.  
+즉, React memo를 사용하면 컴포넌트의 속성(props)이나 상태(state)가 변경되지 않는 한, 다시 컴포넌트를 렌더링하지 않는다. 
+
+```
+const Button = memo(({text, onClick}) => {
+    console.log('Button', text, 're-rendering haha')
+    const result = useMemo(() => calculateSomething(), []);
+    return (
+        <button
+            onClick={onClick}
+            style={
+                {
+                    backgroundColor: 'black',
+                    color: 'white',
+                    borderRadius: '20px',
+                    margin: '0.4rem',
+                    cursor: 'pointer',
+                }
+            }
+        >
+            {`${text} ${result}`}
+        </button>
+    );
+});
+
+```
