@@ -18,7 +18,7 @@ import AppMentorsButton from "./AppMentorsButton";
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <AppMentorsButton/>
+    <AppProduct/>
   </React.StrictMode>
 );
 
