@@ -87,3 +87,72 @@ export default Button1;
 두개의 `CSS` 파일에서 동일한 이름의 클래스를 사용했지만
 `CSS`를 파일별 모듈별로 관리를 해주기 때문에 이름 충돌을 걱정하지 않아도된다.  
 또한 기존 `CSS`규칙을 그대로 따른 상태에서 관리해준다. 
+  
+## Styled Components
+`Styled Components`는`Javascript`파일 안에서 `CSS`문법을 사용할 수 있는 라이브러리이다.  
+[Styled Components 공식 홈페이지](https://styled-components.com/)  
+  
+```
+const Button = styled.a`
+  /* This renders the buttons above... Edit me! */
+  display: inline-block;
+  border-radius: 3px;
+  padding: 0.5rem 0;
+  margin: 0.5rem 1rem;
+  width: 11rem;
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+
+  /* The GitHub button is a primary button
+   * edit this to target it specifically! */
+  ${props => props.$primary && css`
+    background: white;
+    color: black;
+  `}
+`
+```  
+공식 홈페이지 예제에서 볼 수 있듯이 `Javascript`파일안에서 CSS 문법을 사용한다.  
+먼저 `Button`은 스타일 컴포넌트이고 `a` 태그이다.  
+또한 `props` 를 통해서 특정 값일 때 다른 `CSS` 도 적용할 수 있다.  
+### 추가하는 방법
+```
+yarn add styled-components
+```
+만약 추가한후에  
+```
+ERROR in ./.yarn/__virtual__/styled-components-virtual-fbc3a878cb/0/cache/styled-components-npm-5.3.9-4d660d9c99-404311cc70.zip/node_modules/styled-components/dist/styled-components.browser.esm.js 1:0-80
+```
+이러한 에러가 발생하면 추가적으로 수동으로 `react-is`를 추가해준다.  
+```
+yarn add react-is
+```
+  
+### 예시
+스타일은 `` 안에 `CSS`문법을 작성해주면 된다.  
+```
+const Container = styled.div`
+    display:flex;
+    flex-direction:column;
+`;
+```
+![key.png](../memo/styles_component.png)  
+  
+```
+const Button = styled.button`
+  background: transparent;
+  border-radius: 3px;
+  border: 2px solid #3c5b69;
+  color: #b9eaff;
+  margin: 0 1em;
+  padding: 0.25em 1em;
+  height:50px;
+  ${(props) =>
+    props.primary &&
+    css`
+      background: #009cd5;
+      color: white;
+    `};
+`;
+```
+![key.png](../memo/2.styles_component.png)  
