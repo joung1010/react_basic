@@ -391,4 +391,34 @@ export default function useProducts({salesOnly}) {
 ``` 
   
 ### 주의사항
-`Hooks`(함수들은) 값의 재사용이 아니라 `로직의 재사용을 위한 것 이다.`
+`Hooks`(함수들은) 값의 재사용이 아니라 `로직의 재사용을 위한 것 이다.`  
+  
+## Class Component
+```
+export  default class AppClass extends Component {
+    state = {count: 0};
+    onClick = () => {
+        this.setState({count: this.state.count + 1});
+    };
+    componentDidMount() {
+        console.log('컴포넌트가 마운트 되었음!!');
+    }
+    componentWillUnmount() {
+        console.log('컴포넌트가 언마운트될 예정임!!')
+    }
+
+    render() {
+        return (
+            <div className='container'>
+                <div className='banner'>
+                    Total Count : {this.state.count} {this.state.count > 10 ? '🔥' : '❄️'}
+                </div>
+                <div className='counters'>
+                    <Counter total={this.state.count} onClick={this.onclick}/>
+                    <Counter total={this.state.count} onClick={this.onclick}/>
+                </div>
+            </div>
+        );
+    }
+}
+```

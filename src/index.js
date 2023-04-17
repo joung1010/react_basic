@@ -14,11 +14,12 @@ import AppWrap from "./AppWrap";
 import AppCard from "./AppCard";
 import AppTheme from "./AppTheme";
 import AppMentorsButton from "./AppMentorsButton";
+import AppClass from "./AppClass";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <AppProduct/>
+    <AppClass/>
   </React.StrictMode>
 );
 
