@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Counter from "./basic/components/Counter";
+import Counter from "../basic/components/Counter";
 
 export  default class AppClass extends Component {
     state = {count: 0};
