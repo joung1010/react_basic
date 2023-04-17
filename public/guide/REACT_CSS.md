@@ -156,3 +156,47 @@ const Button = styled.button`
 `;
 ```
 ![key.png](../memo/2.styles_component.png)  
+  
+## TailWind
+`Tailwind CSS`는 CSS 프레임워크로, CSS 코드를 작성하는 데 사용되는 많은 클래스(class)를 미리 정의하여 개발자가 코드를 작성하는 데 편리함을 제공한다.  
+[tailwindcss 공식홈페이지](https://tailwindcss.com/)  
+기존의 CSS 프레임워크와 달리, `Tailwind CSS`는 클래스 이름에 따라 CSS 스타일이 적용되므로,  
+`CSS` 코드를 작성하는 데 있어서 다소 생산적인 방법을 제공한다.  
+  
+### 설치
+```
+yarn add -D tailwindcss
+npx tailwindcss init
+```  
+tailwind.config.js 파일에 컨텐트 타입추가
+```
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: ["./src/**/*.{html,js,jsx,ts,tsx}"],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+```
+
+CSS 파일 상단에 해당코드 추가
+```
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+  
+### 사용예시
+```
+
+export default function TailwindComponent(props) {
+    return (
+        <div>
+            <h1 className='text-8xl'>안녕!</h1>
+            <button className='bg-blue-500 rounded-xl px-2'>Button</button>
+        </div>
+    );
+}
+```
+![key.png](../memo/2.tailwind.png)   
