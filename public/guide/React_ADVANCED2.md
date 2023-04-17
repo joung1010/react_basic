@@ -349,3 +349,46 @@ const Button = memo(({text, onClick}) => {
 });
 
 ```
+  
+## Custom Hook
+우리가 `React`에서 `hook`을 사용할때 `use`라는 키워드의 함수를 사용한다.  
+이와 같이 우리가 만드는 `Custom Hook` 역시 `use`로 시작하는 함수를 만드는 것으로 시작한다.  
+```
+export default function useProducts({salesOnly}) {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState();
+    const [products, setProducts] = useState([]);
+
+    useEffect(() => {
+        setLoading(true);
+        setError(undefined);
+        fetch(`data/${salesOnly ? 'sale_' : ''}products.json`)
+            .then(res => res.json())
+            .then(data => {
+                console.log('데이터를 받아옴');
+                setProducts(data);
+                setLoading(false);
+            })
+            .catch((msg) => setError('에러가 발생했음!!'))
+            .finally(() => setLoading(false));
+        return () => {
+            console.log('데이터 통신 종료')
+        };
+    }, [salesOnly]);
+
+    return [loading,error,products];
+}
+```
+`Custom Hook`은 일반 `Component`함수 처럼 내부에 `state(상태)`도 가지고 있을 수 있고  
+다른 `React Hook`도 사용이 가능하다.  
+단, 일반 `Component`와 다른점은 일반 `Component`는 `React`에게 전달해줄 `UI JSX`를 `return` 하는 반면에  
+`Custom Hook`은 외부 사용자에게 공유하고 싶은 데이터를 `return` 하면 된다.  
+  
+사용 예제
+```
+    const [checked, setChecked] = useState(false);
+    const [loading, error, products] = useProducts({salesOnly : checked});
+``` 
+  
+### 주의사항
+`Hooks`(함수들은) 값의 재사용이 아니라 `로직의 재사용을 위한 것 이다.`

@@ -1,10 +1,9 @@
-import {useEffect, useState} from "react";
+import { useState} from "react";
+import useProducts from "../../hooks/use-products";
 
 export default function Products() {
-    const [products,setProducts] = useState([]);
     const [checked, setChecked] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState();
+    const [loading, error, products] = useProducts({salesOnly : checked});
 
     const handleChange = () => {
         setChecked((pre) => !pre);
@@ -17,22 +16,6 @@ export default function Products() {
             console.log('데이터를 받아옴');
             setProducts(data);
         });*/
-    useEffect(()=>{
-        setLoading( true);
-        setError(undefined);
-        fetch(`data/${checked ? 'sale_' : ''}products.json`)
-            .then(res => res.json())
-            .then(data => {
-                console.log('데이터를 받아옴');
-                setProducts(data);
-                setLoading( false);
-            })
-            .catch((msg) => setError('에러가 발생했음!!'))
-            .finally(() => setLoading(false));
-        return () => {
-            console.log('데이터 통신 종료')
-        };
-    },[checked]);
 
     if(loading) return <p>Loading...</p>
 
