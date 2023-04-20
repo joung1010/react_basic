@@ -67,4 +67,111 @@ export default function App(props) {
 
 ```
   
+## 실습 outlet
+라우팅에 필요한 컴포넌트들은 보통 `pages`라는 디렉토리를 추가해서 관리한다.  
+우리가 화면 전체를 바꾸는 것이 아니라 네비게이션 바를 만들고 클릭했을때 해당 부분만 변경하고 싶을때는  
+`React Router` 에서 제공하는 `outlet`을 사용하면 된다  
+  
+먼저 우리는 `Root` 라는 컴포넌트 안에 우리가 라우팅할 페이지 값을 설정할 것이다.  
+```
+import React from 'react';
+import {Outlet} from 'react-router-dom';
 
+function Root(props) {
+    return (
+        <div>
+            <Outlet/>
+        </div>
+    );
+}
+
+export default Root;
+```
+또한 네비게이션 컴포넌트를 만들어서 해등 메뉴를 클릭하면 그화면으로 라우팅 되게 설정해보자  
+```
+import React from 'react';
+import {Link} from 'react-router-dom';
+
+function NavBar(props) {
+    return (
+        <nav>
+            <Link to='/'>Home</Link>
+            <Link to='/videos'>Video</Link>
+        </nav>
+    );
+}
+
+export default NavBar;
+```
+이때 `React Router` 에서 제공해주는 `<Link/>`라는 컴포넌트를 이용할 것인데  
+이는 `a` 태그와 유사하다. 차이점은 해당 페이지에서 라우팅을 가능하게 해준다.  
+그후에 `Root`에 우리가 추가한 `NavBar` 컴포넌트를 추가한다.  
+```
+import React from 'react';
+import {Outlet} from 'react-router-dom';
+import NavBar from "../components/NavBar";
+
+function Root(props) {
+    return (
+        <div>
+            <NavBar/>
+            <Outlet/>
+        </div>
+    );
+}
+
+export default Root;
+```  
+그다음에 `App.jsx`에가서 `Root`를 추가한다.  
+
+```
+import React from 'react';
+import {createBrowserRouter, RouterProvider} from 'react-router-dom';
+import NotFound from "./pages/NotFound";
+import Videos from "./pages/Videos";
+import Root from "./pages/Root";
+
+const router = createBrowserRouter([{
+    path: '/',
+    element: <Root/>,
+    errorElement: <NotFound/>
+}, {
+    path: '/videos',
+    element: <Videos/>
+}
+])
+
+export default function App(props) {
+    return (
+        <RouterProvider router={router}/>
+
+    );
+}
+
+```
+
+그다음 우리가 추가한 네바를 클릭하면 어떻게 될까??
+  
+![router](../memo/router.png)  
+우리가 예상한 결과는 우리가 추가한 Navbar 바로 밑에 컨텐츠가 나오기를 바란다.  
+즉 `Outlet` 컴포넌트가 있는 위치에 우리의 컴포넌트가 보이고 `navBar`는 그대로 유지되기를 바란다.  
+그럴때는 `router`의 경로를 외부에 작성하는 것이 아니라 `Root` 컴포넌트의 자식으로 지정해 줘야한다.  
+```
+const router = createBrowserRouter([{
+    path: '/',
+    element: <Root/>,
+    errorElement: <NotFound/>,
+    children: [
+        {
+            index: true, element: <Home/>
+        },
+        {
+            path: '/videos',
+            element: <Videos/>
+        },
+    ]
+},
+])
+```
+![router](../memo/2.router.png)  
+이제야 우리가 원하는 결과대로 작동하는 것을 확인할 수 있다.
