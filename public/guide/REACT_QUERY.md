@@ -14,7 +14,13 @@
   
 ## 공식 사이트
 [React Query TanStack Query 공식사이트](https://tanstack.com/query/v3/)  
-  
+
+`TanStack Query`는 `React Query`와 유사한 데이터 관리 라이브러이다.  
+`TanStack Query는` 클라이언트 측에서 데이터를 쉽게 가져오고 관리할 수 있도록 도와주는데 이 라이브러리는 React Query와 달리 React에 의존하지 않아 다른 프레임워크에서도 사용할 수 있습니다.  
+`TanStack Query`는 API 클라이언트를 자동으로 생성하여 API 요청과 응답을 관리한다. 이를 통해 개발자는 데이터 요청과 관리에 집중할 수 있다.  
+또한 `TanStack Query`는 쿼리 캐싱과 인터셉터(Interceptor)를 지원하여 데이터를 효율적으로 캐시하고 필요한 경우에만 서버로 요청을 보내어 데이터를 가져올 수 있고    
+이를 통해 불필요한 요청을 줄이고 애플리케이션의 성능을 향상시킬 수 있다.  
+
 ### 소개
 Powerful asynchronous state management for TS/JS, React, Solid, Vue and Svelte  
 강력한 비동기 상태 관리 라이브러리  
