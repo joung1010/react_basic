@@ -41,3 +41,138 @@ TanStack Query gives you declarative, always-up-to-date auto-managed queries and
    * `계발툴`, `무제한 로딩 APIs`, `상태 업데이트 툴등`을 제공해준다.  
 ### 제공 기능
 ![query.png](../memo/1.query.png)
+  
+  
+## 설치
+```
+$ npm i @tanstack/react-query
+# or
+$ pnpm add @tanstack/react-query
+# or
+$ yarn add @tanstack/react-query
+```
+  
+## 사용 예제
+```
+import React from 'react';
+import './App.css';
+import MainProducts from './query/components/MainProducts';
+import {
+    QueryClient,
+    QueryClientProvider,
+} from '@tanstack/react-query'
+
+const queryClient = new QueryClient()
+
+export default function App() {
+    return (
+        <QueryClientProvider client={queryClient}>
+            <MainProducts/>;
+        </QueryClientProvider>
+    );
+}
+
+```
+### useQuery
+```
+import React, { useState } from 'react';
+import { useQuery, } from '@tanstack/react-query'
+
+export default function Products() {
+  const [checked, setChecked] = useState(false);
+    const { isLoading, error, data:products } = useQuery({
+        queryKey:['proudcts'],
+        queryFn : async () => {
+            console.log('fetching..');
+            return fetch(`data/products.json`)
+                .then((res) => res.json());
+        },
+    });
+  // const [loading, error, products] = useProducts({ salesOnly: checked });
+  const handleChange = () => setChecked((prev) => !prev);
+
+  if (isLoading) return <p>Loading...</p>;
+
+  if (error) return <p>{error}</p>;
+
+  return (
+    <>
+      <label>
+        <input type='checkbox' checked={checked} onChange={handleChange} />
+        Show Only 🔥 Sale
+      </label>
+      <ul>
+        {products.map((product) => (
+          <li key={product.id}>
+            <article>
+              <h3>{product.name}</h3>
+              <p>{product.price}</p>
+            </article>
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+```
+
+[useQuery() 사용법](https://tanstack.com/query/v4/docs/react/reference/useQuery)
+```
+const {
+  data,
+  dataUpdatedAt,
+  error,
+  errorUpdatedAt,
+  failureCount,
+  failureReason,
+  isError,
+  isFetched,
+  isFetchedAfterMount,
+  isFetching,
+  isPaused,
+  isLoading,
+  isLoadingError,
+  isPlaceholderData,
+  isPreviousData,
+  isRefetchError,
+  isRefetching,
+  isInitialLoading,
+  isStale,
+  isSuccess,
+  refetch,
+  remove,
+  status,
+  fetchStatus,
+} = useQuery({
+  queryKey,
+  queryFn,
+  cacheTime,
+  enabled,
+  networkMode,
+  initialData,
+  initialDataUpdatedAt,
+  keepPreviousData,
+  meta,
+  notifyOnChangeProps,
+  onError,
+  onSettled,
+  onSuccess,
+  placeholderData,
+  queryKeyHashFn,
+  refetchInterval,
+  refetchIntervalInBackground,
+  refetchOnMount,
+  refetchOnReconnect,
+  refetchOnWindowFocus,
+  retry,
+  retryOnMount,
+  retryDelay,
+  select,
+  staleTime,
+  structuralSharing,
+  suspense,
+  useErrorBoundary,
+})
+```
+
