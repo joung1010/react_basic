@@ -75,45 +75,19 @@ export default function App() {
 ```
 ### useQuery
 ```
-import React, { useState } from 'react';
-import { useQuery, } from '@tanstack/react-query'
-
 export default function Products() {
   const [checked, setChecked] = useState(false);
-    const { isLoading, error, data:products } = useQuery({
-        queryKey:['proudcts'],
-        queryFn : async () => {
+    const { isLoading, error, data:products } = useQuery(
+        ['proudcts',checked],
+        async () => {
             console.log('fetching..');
-            return fetch(`data/products.json`)
+            return fetch(`data/${checked ? 'sale_':''}products.json`)
                 .then((res) => res.json());
-        },
+        
     });
-  // const [loading, error, products] = useProducts({ salesOnly: checked });
-  const handleChange = () => setChecked((prev) => !prev);
-
   if (isLoading) return <p>Loading...</p>;
 
   if (error) return <p>{error}</p>;
-
-  return (
-    <>
-      <label>
-        <input type='checkbox' checked={checked} onChange={handleChange} />
-        Show Only 🔥 Sale
-      </label>
-      <ul>
-        {products.map((product) => (
-          <li key={product.id}>
-            <article>
-              <h3>{product.name}</h3>
-              <p>{product.price}</p>
-            </article>
-          </li>
-        ))}
-      </ul>
-    </>
-  );
-}
 
 ```
 
@@ -221,7 +195,66 @@ export default function Products() {
     });
 
 ```
+
+## 정리
+`Reac Query`를 사요할때는 `useQuery`라는 훅을 이용한다.  
+이 훅을 사용할떄는 기본적으로 두가지 인자를 전달해준다.  
+1. 캐시를 위한 `Query kes`를 배열 형태로 전달
+2. 함수 -> 네트워크에서 데이터를 받아오는 로직을 함수형태로 전달,즉 네트워크를 통해 받아온 데이터를 `async await`을 통해 값을 바로 반환 하던지 아니면 `Promise`형태로 값을 `return`
+3. 기타 옵션
+
+
+## 우리의 문제점 확인
 이렇게 `query keys`를 이용하면 모든게 완벽한 것일까??  
 이렇게 소스코드르 변경한후 다른윈도우 창에 갔다가 다시돌아오면 `fetching`을 다시 호출하는 것을 확인할 수 있고  
 두번째 `query keys`로 전달한 `checked`값이 변할때마다 데이터는 변하지 않았음에도 불구하고 캐싱데이터를 사용하는 것이 아니라 `fetching`을 다시 호출하는 것을 확인할 수 있다.  
 왜 이런현상이 발생하는 것일까??
+
+## DevTools 설치
+```
+$ npm i @tanstack/react-query-devtools
+# or
+$ pnpm add @tanstack/react-query-devtools
+# or
+$ yarn add @tanstack/react-query-devtools
+```
+개발툴을 `import`하고 
+```
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+```
+
+어플리케이션의 마지막에 `<ReactQueryDevtools initialIsOpen={false} />` 컴포넌트를 추가하면 된다.
+```
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      {/* The rest of your application */}
+      <ReactQueryDevtools initialIsOpen={true} />
+    </QueryClientProvider>
+  )
+}
+```
+이렇게 개발툴이 추가된 것을 확인할 수 있다.
+![query.png](../memo/2.query.png)
+
+
+![query.png](../memo/3.query.png)  
+해당 밑줄의 의미는 지금 `['products',false]` 키조합은 총 2개의 컴포넌트에서 데이터를 가진하고 있다는 의미이다.  
+그리고 해당 색이 노란색 `stale`을 나타나고 이는 데이터가 조금 오래된 데이터를 의미한다.  
+즉. 캐시가 된긴 되었는데 데이터가 조금 오래되었다는 의미이다.
+![query.png](../memo/4.query.png)  
+  
+
+또한 옆쪽에 좀더 상세하게 `Query Details`를 통해 `query keys`의 값이 무엇이 있는지  
+`Observers`로 즉 관찰하고 있는 컴포넌트는 몇개인지 `Last Updated`를 통해 언제 마지막으로 업데이트 되었는지를 알 수 있다.  
+![query.png](../memo/5.query.png)  
+  
+그리고 개발툴을 통해서 수동적으로 `Refetch`, `Invalidate(데이터를 다시 검증)` `reset`, `remove`등 다양하게 수동으로 조작할 수 있고  
+가장 밑 `Data`화면을 통해 실제 받아온 데이터들의 값을 확인할 수 있다.  
+![query.png](../memo/6.query.png)  
+그리고 데이터 밑에 `Query Explorer`을 통해서 `Query`의 다양한 옵션 사항들을 확인할 수 있다.  
+![query.png](../memo/7.query.png)  
+  
+## 문제 확인
+우리가 새롭게 `fetch`해서 데이터를 가지고 왔는데도 불구하고 개발툴에서 확인해보니  
+이 모든 데이터의 상태가 `state`(오래된 데이터)이기 때문에 계속 계속 새롭게 데이터를 받아오는 것을 확인할 수 있다.
