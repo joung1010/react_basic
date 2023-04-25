@@ -10,7 +10,9 @@ export default function Products() {
             return fetch(`data/${checked ? 'sale_':''}products.json`)
                 .then((res) => res.json());
 
-    });
+    },{
+            staleTime : 1000 * 60 * 5,
+        });
 
   const handleChange = () => setChecked((prev) => !prev);
 

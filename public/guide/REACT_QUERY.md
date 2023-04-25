@@ -258,3 +258,33 @@ function App() {
 ## 문제 확인
 우리가 새롭게 `fetch`해서 데이터를 가지고 왔는데도 불구하고 개발툴에서 확인해보니  
 이 모든 데이터의 상태가 `state`(오래된 데이터)이기 때문에 계속 계속 새롭게 데이터를 받아오는 것을 확인할 수 있다.
+  
+## 필수 숙지사항
+[important defaults](https://tanstack.com/query/v4/docs/react/guides/important-defaults)  
+위의 기본 숙지 사항에서 `React Query`는 공격적인 기능과 더불어 안전한 기본값으로 구성되어 있지만  
+때때로 이러한 기본값들 때문에 새로운 사용자들이 배우는데, 혹은 디버깅하는데 많은 어려움을 느끼고 있다.  
+그래서 `React Query`를 사용함에 있어 해당 부분은 꼭 숙지하고 사용하길 권장한다.  
+  
+* Query 객체는 `useQuery` 혹은 `useInfiniteQuery`를 통해 생성되는데 이때 쿼리 객체의 캐시된 데이터의 상태는 `stale(오래된 데이터)`로 간주된다.
+> 그래서 이러한 기본적인 상태를 변경하기 위해서는 쿼리를 전역적으로 설정하거나 쿼리별로 `staleTime`이라는 옵션을 설정해주면 된다.  
+
+* 그래서 기본적으로 `Stale`상태의 쿼리는 자동적으로 `background`에서 `refetch`가 된다.
+  * 새로운 쿼리가 `mount`되었을때 (생성되었을때)
+  * 윈도우 창이 다시 `focused` 되었을때
+  * 네트워크가 다시 연결 되었을때
+  * 쿼리가 `refetch interval` 옵션이 설정 되었을때
+
+  
+따라서 사용자가 예상하지 못한 `refetch`상황을 마주한다면, 대부분 윈도우가 다시 `focus`되어서 `React Query`가 `refetchOnWindowFocus(기본값)`작업을 수행하기 때문일 것이다.  
+그래서 개발하는 단계에서 조금더 자주 발생하는 것을 볼수 있을텐데 그이유는 브라우저 개발툴과 앱을 전환화는 과정도 전부 `refocus`로 해석하기 때문이다.  
+  
+> 그래서 이러한 기본적인 해동들을 변경하기 위한 옵션으로는 `refetchOnMount(component mount시 refetch)`, `refetchOnWindowFocus`, `refetchOnReconnect `, `refetchInterval` 해당 옵션들의 설정을 끄면 `refetch`를 줄일 수 있다.
+  
+* 또한 `useQuery` 나 `useInfiniteQuery`를 사용하는 곳이 없다면 `inactive`상태로 표기가 된다.
+* `inactive`상태가 5분이 지나면 자동적으로 `garbage collect`가 된다.
+> 위의 설정을 변경하려면 `cacheTime`설정을 변경하면 된다.(밀리 세컨드 단위)
+  
+* `React Query`는 네트워크 통신에 실패하게 된다면 재시도를 3회 실행한다. 재시도를 실행할때마다 조금씩 대기시간을 길게해서 재시도를 한다.
+> 위의 옵션도 `retry`와 `retryDelay` 옵션을 통해서 조정할 수 있다.
+  
+## 해결
