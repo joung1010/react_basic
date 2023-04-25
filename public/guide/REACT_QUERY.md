@@ -176,3 +176,52 @@ const {
 })
 ```
 
+## Query Keys
+`TanStack Query`는 기본적으로 `query keys`에 의해 데이터 캐싱을 관리한다.  
+따라서 캐싱을 적절하게 잘 사용하려면 `query keys`를 잘 사용해야 한다.  
+예를 들어 `A`라는 키를 사용하는 요청에는 동이한 캐시를 사용하고 `B`라는 네트워크 요청에는 `B`키에 해당하는 캐싱을 사용한다.  
+그래서 이 `query keys`들을 잘 명시하고 분리하는 것이 중요하다.  
+  
+그러면 왜 문자열이 아니고 배열로 관리할까??  
+그 이유는 좀더 detail 하게 키들의 조합을 만들어 나갈 수 있기 때문이다.  
+```
+// A list of todos
+useQuery({ queryKey: ['todos'], ... })
+
+// Something else, whatever!
+useQuery({ queryKey: ['something', 'special'], ... })
+```
+위의 예제처럼 서로 다른 고유한 키를 사용면 이 두키는 명백히 서로 다른키 이기때문에 두키의 조합은 기존 캐시와 다른 캐시를 사용한다.  
+
+```
+// An individual todo
+useQuery({ queryKey: ['todo', 5], ... })
+
+// An individual todo in a "preview" format
+useQuery({ queryKey: ['todo', 5, { preview: true }], ...})
+
+// A list of todos that are "done"
+useQuery({ queryKey: ['todos', { type: 'done' }], ... })
+```
+위처럼 동일한 데이터 키 `todo`이지만 두번째 키의 상태에 따라 다른 캐시를 사용할 수 있다.  
+  
+```
+import React, { useState } from 'react';
+import { useQuery, } from '@tanstack/react-query'
+
+export default function Products() {
+  const [checked, setChecked] = useState(false);
+    const { isLoading, error, data:products } = useQuery({
+        queryKey:['proudcts',checked],
+        queryFn : async () => {
+            console.log('fetching..');
+            return fetch(`data/${checked ? 'sale_':''}products.json`)
+                .then((res) => res.json());
+        },
+    });
+
+```
+이렇게 `query keys`를 이용하면 모든게 완벽한 것일까??  
+이렇게 소스코드르 변경한후 다른윈도우 창에 갔다가 다시돌아오면 `fetching`을 다시 호출하는 것을 확인할 수 있고  
+두번째 `query keys`로 전달한 `checked`값이 변할때마다 데이터는 변하지 않았음에도 불구하고 캐싱데이터를 사용하는 것이 아니라 `fetching`을 다시 호출하는 것을 확인할 수 있다.  
+왜 이런현상이 발생하는 것일까??
