@@ -322,4 +322,21 @@ UI(React) 에서  `Query`라는 것을 이용해서 네트워크 통신을하도
   
 이 과정에서 `Query`내부적으로 해당 캐시 데이터의 상태가 `stale`인경우 `background`에서 다시 네트워크 통신을 통해 신선한 데이터를 받아온 후  
 보관중인 캐시 데이터를 새로 받아온 데이터로 업데이트 한다.  
-이때 초기값을 설정하지 않으면 `stale` 타임이 0초 이기때문에 받아오자마자 `Query`는 해당 데이터의 상태를 다시 `stale`로 판단하고 다시 요청이들어올때마다 네트워크 통신을 시도한다.
+이때 초기값을 설정하지 않으면 `stale` 타임이 0초 이기때문에 받아오자마자 `Query`는 해당 데이터의 상태를 다시 `stale`로 판단하고 다시 요청이들어올때마다 네트워크 통신을 시도한다.  
+  
+## 추가사항
+만약 사용자가 새롭게 어떠한 데이터를 추가했을때 현재 보여지고 있는 캐시된 데이터는 `invalided`되었다고 알려줄 수 있다.  
+`<QueryClientProvider>` `쿼리 클리이언트`의 우산을 쓰고 있는 자식 컴포넌트에서는  
+`useQueryClient()`훅을 통해서 사용 `client`라는 객체를 가지고 올 수 있다.  
+```
+import { useQueryClient, } from '@tanstack/react-query'
+
+const client = useQueryClient();
+
+```
+이 `client`객체의 `invalidateQueries API`를 통해서 인자 값으로 `Query`의 키값을 전달해주면  
+해당 키값에 해당하는 모든 `Query`를 `invalidated`하게 바꿔준다.  
+그러면 새롭게 네트워크 통신을 통해서 새로운 데이터를 받아와 캐시에 업데이트한다.
+```
+client.invalidateQueries(['products', false]);
+```
