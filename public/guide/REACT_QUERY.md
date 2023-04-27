@@ -288,3 +288,38 @@ function App() {
 > 위의 옵션도 `retry`와 `retryDelay` 옵션을 통해서 조정할 수 있다.
   
 ## 해결
+3번째 인자로 기타 옵션값을 전달한다.
+```
+export default function Products() {
+  const [checked, setChecked] = useState(false);
+    const { isLoading, error, data:products } = useQuery(
+        ['proudcts',checked],
+        async () => {
+            console.log('fetching..');
+            return fetch(`data/${checked ? 'sale_':''}products.json`)
+                .then((res) => res.json());
+
+    },{
+            staleTime : 1000 * 60 * 5,
+        });
+
+```
+  
+## 정리
+우리의 application 에서 서버에 빈번히 수동적으로 네트워크 통신을 하는 것이 아니라  
+UI(React) 에서  `Query`라는 것을 이용해서 네트워크 통신을하도록 설정하였다.  
+그래서 `React`가 `Query`에게 key 값은 `products`라고 알려주면  
+`Query`는 `products`라는 키값에 캐시가 없으면 서버와 네트워크 통신을 해서 데이터를 요청하고  
+받아온 데이터를 캐시로 저장해둔다.  
+  
+이때 캐시로 저장할때 그냥 저장해두는 것이 아니라  
+우리가 명시한 키값의 이름으로 해당하는 데이터를 저장하고  
+기본적인 설정햐지 않으면 `stale 타임은 0초` 기본 캐시 시간은 `5분`이다  
+이렇게 저장한 데이터를 `UI`에서 받아와서 화면에 보여줄 것이다.  
+  
+이때 몇초가 지난후에 다시 `products`라는 키에 해당하는 데이터 여부를 `Query`에게 물어보면  
+이때 `Query`는 아직 캐시된 데이터가 남아있기 때문에 캐시된 데이터를 `UI`에게 전달한다.  
+  
+이 과정에서 `Query`내부적으로 해당 캐시 데이터의 상태가 `stale`인경우 `background`에서 다시 네트워크 통신을 통해 신선한 데이터를 받아온 후  
+보관중인 캐시 데이터를 새로 받아온 데이터로 업데이트 한다.  
+이때 초기값을 설정하지 않으면 `stale` 타임이 0초 이기때문에 받아오자마자 `Query`는 해당 데이터의 상태를 다시 `stale`로 판단하고 다시 요청이들어올때마다 네트워크 통신을 시도한다.
