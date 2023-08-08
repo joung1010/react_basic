@@ -74,6 +74,8 @@ ERROR
   
 3. 제일 상위에다가 `.yarnrc.yml` 파일을 만든후  
 ```
+nodeLinker: node-modules
+
 packageExtensions:
   react-scripts@*:
     peerDependencies:
