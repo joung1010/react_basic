@@ -264,3 +264,71 @@ function VideoDetail(props) {
 export default VideoDetail;
 ```  
 ![router](../memo/4.router.png)  
+  
+## 라우팅 심화
+특정 경로에 접근할때 로그인 확인여부 및 특정 권한을 가진사용자만 접근하게 하는 방법은 무엇이 있을까??  
+```
+const root = ReactDOM.createRoot(document.getElementById('root'));
+const router = createBrowserRouter([
+    {
+        path:'/',
+        element:<App/>,
+        errorElement: <NotFound/>,
+        children: [
+            {index:true,element:<Home/>},
+            {path:'/products',element: <Products/>},
+            {path:'/products/new',element: <NewProduct/>},
+            {path:'/products/:id',element: <ProductDetail/>},
+            {path:'/carts',element: <Carts/>},
+        ],
+    }
+]);
+```
+위와 같이 특정경로에 바로 접근하는 것이 아니라 한단계 감싸서 접근해보면 어떨까??  
+예를 들어, `<Cart/>` 컴포넌트는 로그인 한 사용자만 접근하고 싶다면  
+이 컴포넌트에 바로 접근하는 것이아니라 `<ProtectedRoute/>`와 같은 컴포넌트를 호출하고 그곳에서 validation한 다음에 원하는 경로로 접근할 수 있게 해준다.  
+```
+const root = ReactDOM.createRoot(document.getElementById('root'));
+const router = createBrowserRouter([
+    {
+        path:'/',
+        element:<App/>,
+        errorElement: <NotFound/>,
+        children: [
+            {index:true,element:<Home/>},
+            {path:'/products',element: <Products/>},
+            {path:'/products/new',element: 
+            <ProtectedRoute requireAdmin> /*requireAdmin = true*/
+                <NewProduct/>
+            </ProtectedRoute>
+            },
+            {path:'/products/:id',element: <ProductDetail/>},
+            {path:'/carts',element:
+                    <ProtectedRoute>
+                        <Carts/>
+                    </ProtectedRoute>
+                    },
+        ],
+    }
+]);
+```
+```
+import React from 'react';
+import {useLoginApi} from "../../context/LoginContext";
+import {Navigate} from 'react-router-dom';
+
+function ProtectedRoute({children, requireAdmin}) {
+    const {user} = useLoginApi();
+    // 로그인한 사용자가 있는지 확인
+    // 그 사용자가 어드민 권한이 있는지 확인
+    // requireAdmin이 true인 경우에는 로그인도 되어 있어야하고, 어드민 권한도 가지고 있어야함
+    // 조건에 맞이 않으면 상위 경로로 이동
+    // 조건에 맞는 경우에만 전달된 children을 보여줌
+    if (!user || (requireAdmin && !user.isAdmin)) {
+        return <Navigate to='/' replace/>; // useNavigate를 이용해서 Home 컴포넌트로 이동해도됨
+    }
+    return children;
+}
+
+export default ProtectedRoute;
+```
