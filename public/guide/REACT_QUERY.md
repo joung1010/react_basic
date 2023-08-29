@@ -304,6 +304,65 @@ export default function Products() {
         });
 
 ```
+
+## useMutation  
+useMutation은 데이터를 변경하는 작업에 사용되는 훅입니다.  
+useMutation 훅은 주로 REST API 또는 GraphQL API와 상호 작용하는 데 사용됩니다. 예를 들어, 새로운 데이터를 생성하거나 기존 데이터를 수정 또는 삭제할 때 사용할 수 있습니다.  
+즉, useQuery를 사용하여 데이터를 특정시간동안 캐싱해서 가지고있다면 새로운 데이터가 추가되고 삭제될때 자동적으로 새로운데이터를 가지고 오지 않는다. 해당 쿼리키가 invalide 되었다고 알려줘야하는데 이럴때 useMutation hook을 사용하면 손쉽게 사용할 수 있다.  
+```
+const addProduct = useMutation(
+        {
+            mutationFn: ({products, url}) => dbService.setProduct(products, url),
+            onSuccess: () => queryClient.invalidateQueries(['products']),/*기본적인 해동을 정의*/
+        });
+
+addProduct.mutate({products, url}, {
+                    onSuccess: () => {
+                        setSuccess('성공적으로 제품이 추가되었습니다.');
+                        setTimeout(() => {
+                            setSuccess(null);
+                        }, 4000);
+                    }
+                });/*mutate 함수를 호출하는 시점에서도 특정 결과에 따른 행동을 정의할 수 있다.*/
+```
+
+
+## 심화
+이렇게 우리가 useQuery 를통해서 상태값을 효율적으로 관리하지만 막상 수정이 발생했을때 어떤 Component에서 사용하는지 찾기는 쉽지않다.  
+그렇기 때문에 단하나의 useQuery를 이용하더라도 Custom Hook을 만들어서 관리하면 많은 이점을 가질 수 있다.  
+### 장점  
+1. 데이터와 관련된 fetching 부문을 ui와 분리할 수 있다.
+2. query key를 사용하는 곳을 단 한곳에서 관리할 수 있다.
+3. 추가적인 설정변경 및 데이터 작업을 추가할때도 한곳에서 관리할 수 있다.
+
+**여기서 핵심은 UI 와 business 로직을 분리하는데 있다.**  
+Custom Hook  
+```
+import {useMutation, useQueryClient,useQuery} from "@tanstack/react-query";
+import DatabaseService from "../service/database/databaseService";
+
+const dbService = new DatabaseService();
+
+export  default function useProducts() {
+    const queryClient = useQueryClient();
+
+    const productsQuery = useQuery(
+        ['products'], () => dbService.getProducts()
+        , {
+            staleTime: 1000 * 60 * 1,
+        }
+    );
+
+    const addProduct =  useMutation(
+        {
+            mutationFn: ({products, url}) => dbService.setProduct(products, url),
+            onSuccess: () => queryClient.invalidateQueries(['products']),/*기본적인 해동을 정의*/
+        });
+    return {productsQuery, addProduct};
+}
+```
+
+참고: [블로](https://tkdodo.eu/blog/practical-react-query#create-custom-hooks)
   
 ## 정리
 우리의 application 에서 서버에 빈번히 수동적으로 네트워크 통신을 하는 것이 아니라  
